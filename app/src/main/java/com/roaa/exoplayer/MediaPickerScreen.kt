@@ -4,8 +4,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -17,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.compose.ContentFrame
 
 @Composable
 fun MediaPickerScreen(modifier: Modifier) {
@@ -50,6 +53,8 @@ fun MediaPickerScreen(modifier: Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
+
+        // Button for selecting the video
         Button(
             onClick = {
                 videoPickerLauncher.launch(
@@ -62,5 +67,17 @@ fun MediaPickerScreen(modifier: Modifier) {
             Text("Select Video")
         }
 
+        // Showing the video in content Frame
+        Box(
+            modifier = Modifier.
+            fillMaxWidth().
+            weight(1f)
+        ){
+            ContentFrame(
+                player = player,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
     }
 }
