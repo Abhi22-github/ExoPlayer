@@ -25,7 +25,7 @@ fun PlayerUi(
     totalDuration: Long = 0L
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
@@ -45,10 +45,11 @@ fun PlayerUi(
         ) {
             val icon = if (isPlaying) R.drawable.pause_icon else R.drawable.play_icon
             Icon(
-                modifier = modifier.size(48.dp),
+                modifier = Modifier.size(48.dp),
                 imageVector =
                     ImageVector.vectorResource(icon),
                 contentDescription = "play/pause",
+                tint = Color.White
             )
         }
 

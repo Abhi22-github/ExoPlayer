@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import com.roaa.exoplayer.ui.PlayerUi
@@ -59,6 +61,22 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                 prepare()
                 play()
             }
+        }
+    }
+
+    RetainedEffect(player) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(playing: Boolean) {
+                super.onIsPlayingChanged(playing)
+                isPlaying = playing
+            }
+
+        }
+
+        player.addListener(listener)
+        onRetire {
+            player.removeListener(listener)
+            player.release()
         }
     }
 
@@ -102,7 +120,12 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
             ) {
                 PlayerUi(
-                    playPauseClick = {},
+                    playPauseClick = {
+                        when {
+                            isPlaying -> player.pause()
+                            !isPlaying -> player.play()
+                        }
+                    },
                     modifier = Modifier,
                     isPlaying = isPlaying,
                     currentPosition = currentPosition,
