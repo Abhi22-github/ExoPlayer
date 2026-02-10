@@ -3,6 +3,10 @@ package com.roaa.exoplayer
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +52,10 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
 
     var totalDuration by retain {
         mutableLongStateOf(0L)
+    }
+
+    var isPlayerUiVisible by retain {
+        mutableStateOf(false)
     }
 
     // Creating Launcher for activity result to get URI
@@ -107,6 +115,12 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .clickable(
+                    interactionSource = null,
+                    indication = null
+                ) {
+                    isPlayerUiVisible = !isPlayerUiVisible
+                }
         ) {
             ContentFrame(
                 player = player,
@@ -119,21 +133,25 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                PlayerUi(
-                    playPauseClick = {
-                        when {
-                            isPlaying -> player.pause()
-                            !isPlaying -> player.play()
-                        }
-                    },
-                    modifier = Modifier,
-                    isPlaying = isPlaying,
-                    currentPosition = currentPosition,
-                    totalDuration = totalDuration
-                )
+                AnimatedVisibility(
+                    visible = isPlayerUiVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    PlayerUi(
+                        playPauseClick = {
+                            when {
+                                isPlaying -> player.pause()
+                                !isPlaying -> player.play()
+                            }
+                        },
+                        modifier = Modifier,
+                        isPlaying = isPlaying,
+                        currentPosition = currentPosition,
+                        totalDuration = totalDuration
+                    )
+                }
             }
         }
-
-
     }
 }
