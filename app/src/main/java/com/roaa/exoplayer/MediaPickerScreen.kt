@@ -54,6 +54,10 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         mutableLongStateOf(0L)
     }
 
+    var isBuffering by retain {
+        mutableStateOf(false)
+    }
+
     var isPlayerUiVisible by retain {
         mutableStateOf(false)
     }
@@ -77,6 +81,14 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
             override fun onIsPlayingChanged(playing: Boolean) {
                 super.onIsPlayingChanged(playing)
                 isPlaying = playing
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                isBuffering = playbackState == Player.STATE_BUFFERING
+                if (playbackState == Player.STATE_READY) {
+                    totalDuration = player.duration.coerceAtLeast(0)
+                }
             }
 
         }
@@ -146,9 +158,16 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                             }
                         },
                         modifier = Modifier,
+                        isBuffering = isBuffering,
                         isPlaying = isPlaying,
                         currentPosition = currentPosition,
-                        totalDuration = totalDuration
+                        totalDuration = totalDuration,
+                        onSeekBarPositionChange = {
+
+                        },
+                        onSeekBarPositionChangeFinished = {
+
+                        }
                     )
                 }
             }
