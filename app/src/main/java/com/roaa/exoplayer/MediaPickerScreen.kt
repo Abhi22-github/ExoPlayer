@@ -58,6 +58,10 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         mutableStateOf(false)
     }
 
+    var isSeeking by retain{
+        mutableStateOf(false)
+    }
+
     var isPlayerUiVisible by retain {
         mutableStateOf(false)
     }
@@ -163,10 +167,12 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                         currentPosition = currentPosition,
                         totalDuration = totalDuration,
                         onSeekBarPositionChange = {
-
+                            isSeeking = true
+                            currentPosition = it
                         },
                         onSeekBarPositionChangeFinished = {
-
+                            player.seekTo(it)
+                            isSeeking = false
                         }
                     )
                 }
