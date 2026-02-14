@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import com.roaa.exoplayer.ui.PlayerUi
+import kotlinx.coroutines.delay
 
 @Composable
 fun MediaPickerScreen(modifier: Modifier = Modifier) {
@@ -104,6 +106,14 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    LaunchedEffect(player, isPlaying, isSeeking) {
+        while(isPlaying) {
+            if(!isSeeking) {
+                currentPosition = player.currentPosition.coerceAtLeast(0)
+            }
+            delay(16L)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -157,6 +167,10 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                     PlayerUi(
                         playPauseClick = {
                             when {
+                                !isPlaying && player.playbackState == Player.STATE_ENDED -> {
+                                    player.seekTo(0)
+                                    player.play()
+                                }
                                 isPlaying -> player.pause()
                                 !isPlaying -> player.play()
                             }
@@ -165,7 +179,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                         isBuffering = isBuffering,
                         isPlaying = isPlaying,
                         currentPosition = currentPosition,
-                        totalDuration = totalDuration,
+                        duration = totalDuration,
                         onSeekBarPositionChange = {
                             isSeeking = true
                             currentPosition = it

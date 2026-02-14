@@ -39,7 +39,7 @@ fun PlayerUi(
     isPlaying: Boolean = true,
     isBuffering: Boolean = false,
     currentPosition: Long = 0L,
-    totalDuration: Long = 0L,
+    duration: Long = 0L,
     onSeekBarPositionChange: (Long) -> Unit,
     onSeekBarPositionChangeFinished: (Long) -> Unit,
 
@@ -100,7 +100,7 @@ fun PlayerUi(
                 onValueChangeFinished = {
                     onSeekBarPositionChangeFinished(currentPosition)
                 },
-                valueRange = 0f..totalDuration.toFloat(),
+                valueRange = 0f..duration.toFloat(),
                 modifier = Modifier
                     .weight(1f),
                 thumb = {
@@ -121,7 +121,7 @@ fun PlayerUi(
                     ) {
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth(sliderState.value / totalDuration)
+                                .fillMaxWidth(sliderState.value / duration)
                                 .fillMaxHeight()
                                 .background(MaterialTheme.colorScheme.primary)
                         )
@@ -129,7 +129,7 @@ fun PlayerUi(
                 }
             )
             Text(
-                text = formatDuration(totalDuration),
+                text = formatDuration(duration),
                 color = Color.White
             )
         }
