@@ -35,15 +35,14 @@ import java.util.Locale
 @Composable
 fun PlayerUi(
     playPauseClick: () -> Unit,
+    onSeekBarPositionChange: (Long) -> Unit,
+    onSeekBarPositionChangeFinish: () -> Unit,
     modifier: Modifier = Modifier,
     isPlaying: Boolean = true,
     isBuffering: Boolean = false,
     currentPosition: Long = 0L,
-    duration: Long = 0L,
-    onSeekBarPositionChange: (Long) -> Unit,
-    onSeekBarPositionChangeFinished: (Long) -> Unit,
-
-    ) {
+    duration: Long = 0L
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -98,7 +97,7 @@ fun PlayerUi(
                     onSeekBarPositionChange(newPosition.toLong())
                 },
                 onValueChangeFinished = {
-                    onSeekBarPositionChangeFinished(currentPosition)
+                    onSeekBarPositionChangeFinish()
                 },
                 valueRange = 0f..duration.toFloat(),
                 modifier = Modifier

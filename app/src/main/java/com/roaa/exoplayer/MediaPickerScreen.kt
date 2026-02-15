@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
@@ -32,12 +33,15 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import com.roaa.exoplayer.ui.PlayerUi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MediaPickerScreen(modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     // Creating player using retain composable
     val player = retain {
@@ -49,6 +53,10 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
     }
 
     var currentPosition by retain {
+        mutableLongStateOf(0L)
+    }
+
+    var seekPosition by retain {
         mutableLongStateOf(0L)
     }
 
@@ -111,13 +119,13 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
             if(!isSeeking) {
                 currentPosition = player.currentPosition.coerceAtLeast(0)
             }
-            delay(16L)
+            delay(250L)
         }
     }
 
     LaunchedEffect(isPlayerUiVisible, isSeeking, isPlaying) {
         delay(5000L)
-        if(!isSeeking) {
+        if(!isPlayerUiVisible && !isSeeking) {
             isPlayerUiVisible = false
         }
     }
@@ -189,10 +197,11 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                         duration = totalDuration,
                         onSeekBarPositionChange = {
                             isSeeking = true
+                            seekPosition = it
                             currentPosition = it
                         },
-                        onSeekBarPositionChangeFinished = {
-                            player.seekTo(it)
+                        onSeekBarPositionChangeFinish = {
+                            player.seekTo(seekPosition)
                             isSeeking = false
                         }
                     )
