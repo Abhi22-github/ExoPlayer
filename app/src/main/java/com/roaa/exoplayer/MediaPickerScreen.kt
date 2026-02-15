@@ -115,6 +115,13 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    LaunchedEffect(isPlayerUiVisible, isSeeking, isPlaying) {
+        delay(5000L)
+        if(!isSeeking) {
+            isPlayerUiVisible = false
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
