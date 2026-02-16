@@ -55,4 +55,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation(libs.bundles.media3)
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+
+    // For loading thumbnails (optional)
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-video:2.5.0")
 }

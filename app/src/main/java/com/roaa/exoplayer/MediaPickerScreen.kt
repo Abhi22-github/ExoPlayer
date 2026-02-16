@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
@@ -67,6 +68,9 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
     var isBuffering by retain {
         mutableStateOf(false)
     }
+
+    // Button for selecting the video
+    var showVideoList by remember { mutableStateOf(false) }
 
     var isSeeking by retain{
         mutableStateOf(false)
@@ -138,18 +142,22 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
 
-        // Button for selecting the video
-        Button(
-            onClick = {
-                videoPickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
+        if (showVideoList) {
+            VideoListScreen()
+        } else {
+            Button(
+                onClick = {
+                    videoPickerLauncher.launch(
+                        PickVisualMediaRequest(
+                            mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
+                        )
                     )
-                )
+                }
+            ) {
+                Text("Select Video")
             }
-        ) {
-            Text("Select Video")
         }
+
 
         // Showing the video in content Frame
         Box(
