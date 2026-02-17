@@ -2,6 +2,7 @@ package com.roaa.exoplayer
 
 import android.content.ContentUris
 import android.content.Context
+import android.os.Build
 import android.provider.MediaStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,6 +53,17 @@ class VideoRepository(private val context: Context) {
                     id
                 )
 
+                val thumbnailUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // For Android 10+, use the video URI directly with Coil
+                    contentUri
+                } else {
+                    // For older versions, try to get thumbnail from MediaStore
+                    ContentUris.withAppendedId(
+                        MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+                }
+
                 videos.add(
                     VideoItem(
                         id = id,
@@ -61,7 +73,8 @@ class VideoRepository(private val context: Context) {
                         size = size,
                         dateAdded = dateAdded,
                         mimeType = mimeType,
-                        path = path
+                        path = path,
+                        thumbnailUri = thumbnailUri
                     )
                 )
             }

@@ -70,7 +70,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
     }
 
     // Button for selecting the video
-    var showVideoList by remember { mutableStateOf(false) }
+    var showVideoList by remember { mutableStateOf(true) }
 
     var isSeeking by retain{
         mutableStateOf(false)

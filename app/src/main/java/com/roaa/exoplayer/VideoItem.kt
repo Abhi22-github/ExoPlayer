@@ -10,5 +10,6 @@ data class VideoItem(
     val size: Long,
     val dateAdded: Long,
     val mimeType: String,
-    val path: String
+    val path: String,
+    val thumbnailUri: Uri? = null  // Add this
 )

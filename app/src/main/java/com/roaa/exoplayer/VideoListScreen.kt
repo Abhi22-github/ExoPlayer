@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.roaa.exoplayer.ui.formatDuration
@@ -117,6 +118,7 @@ fun VideoList(videos: List<VideoItem>, modifier: Modifier = Modifier) {
 
 @Composable
 fun VideoItemCard(video: VideoItem) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +130,10 @@ fun VideoItemCard(video: VideoItem) {
         ) {
             // Video thumbnail (optional - you can load using Coil/Glide)
             AsyncImage(
-                model = video.uri,
+                model = ImageRequest.Builder(context)
+                    .data(video.uri)  // Use the video URI directly
+                    .crossfade(true)
+                    .build(),
                 contentDescription = video.name,
                 modifier = Modifier
                     .size(80.dp)
