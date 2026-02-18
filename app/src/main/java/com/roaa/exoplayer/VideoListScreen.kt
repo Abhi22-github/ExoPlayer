@@ -43,7 +43,10 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun VideoListScreen(modifier: Modifier = Modifier) {
+fun VideoListScreen(
+    videoFolderClick: (VideoFolder) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -72,7 +75,12 @@ fun VideoListScreen(modifier: Modifier = Modifier) {
             if (isLoading) {
                 LoadingIndicator()
             } else {
-                VideoList(modifier = modifier, videoFolderList = videos)
+                VideoList(
+                    modifier = modifier,
+                    videoFolderList = videos,
+                    videoFolderClick = { videoFolder ->
+                        videoFolderClick(videoFolder)
+                    })
             }
         }
 
@@ -99,7 +107,11 @@ fun PermissionRequestScreen(onRequestPermission: () -> Unit, modifier: Modifier 
 }
 
 @Composable
-fun VideoList(modifier: Modifier = Modifier, videoFolderList: List<VideoFolder> = emptyList()) {
+fun VideoList(
+    videoFolderList: List<VideoFolder>,
+    videoFolderClick: (VideoFolder) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LazyVerticalGrid(
         state = rememberLazyGridState(),
         modifier = modifier
@@ -110,20 +122,28 @@ fun VideoList(modifier: Modifier = Modifier, videoFolderList: List<VideoFolder> 
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(videoFolderList) {
-            VideoFolderItem(videoFolder = it)
+            VideoFolderItem(
+                videoFolder = it,
+                videoFolderClick = { videoFolder ->
+                    videoFolderClick(videoFolder)
+                })
         }
     }
 }
 
 @Composable
-fun VideoFolderItem(modifier: Modifier = Modifier, videoFolder: VideoFolder) {
+fun VideoFolderItem(
+    videoFolder: VideoFolder,
+    videoFolderClick: (VideoFolder) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     Column() {
         Card(
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    // TODO
+                    videoFolderClick(videoFolder)
                 }
                 .clip(RoundedCornerShape(12.dp))) {
             Box(
@@ -141,11 +161,14 @@ fun VideoFolderItem(modifier: Modifier = Modifier, videoFolder: VideoFolder) {
 }
 
 @Composable
-fun FolderThumbnailCollage(modifier: Modifier = Modifier, videoList: List<VideoItem>) {
+fun FolderThumbnailCollage(
+    modifier: Modifier = Modifier,
+    videoList: List<VideoItem> = emptyList(),
+) {
     val previewList = videoList.take(4)
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         when (previewList.size) {
             1 -> {

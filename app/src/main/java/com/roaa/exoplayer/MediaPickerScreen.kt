@@ -34,9 +34,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import com.roaa.exoplayer.ui.PlayerUi
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun MediaPickerScreen(modifier: Modifier = Modifier) {
@@ -143,7 +141,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
     ) {
 
         if (showVideoList) {
-            VideoListScreen()
+            //VideoListScreen()
         } else {
             Button(
                 onClick = {

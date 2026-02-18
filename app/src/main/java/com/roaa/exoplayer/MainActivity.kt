@@ -17,9 +17,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             ExoPlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                   VideoListScreen(
-                       modifier = Modifier.padding(innerPadding)
-                   )
+                    VideoListScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        videoFolderClick = { videoFolder ->
+
+                        }
+                    )
                 }
             }
         }
