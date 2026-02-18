@@ -7,10 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.roaa.exoplayer.ui.theme.ExoPlayerTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,9 +17,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ExoPlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MediaPickerScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                   VideoListScreen(
+                       modifier = Modifier.padding(innerPadding)
+                   )
                 }
             }
         }

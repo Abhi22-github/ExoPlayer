@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 class VideoRepository(private val context: Context) {
 
-    suspend fun getAllVideos(): List<VideoItem> = withContext(Dispatchers.IO) {
+    suspend fun getAllVideo(): List<VideoFolder> = withContext(Dispatchers.IO) {
         val videos = mutableListOf<VideoItem>()
 
         val projection = arrayOf(
@@ -19,7 +19,9 @@ class VideoRepository(private val context: Context) {
             MediaStore.Video.Media.SIZE,
             MediaStore.Video.Media.DATE_ADDED,
             MediaStore.Video.Media.MIME_TYPE,
-            MediaStore.Video.Media.DATA
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.BUCKET_ID,
+            MediaStore.Video.Media.BUCKET_DISPLAY_NAME
         )
 
         val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
@@ -38,6 +40,9 @@ class VideoRepository(private val context: Context) {
             val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)
             val mimeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
             val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val bucketId = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID)
+            val bucketName =
+                cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
 
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
@@ -47,6 +52,8 @@ class VideoRepository(private val context: Context) {
                 val dateAdded = cursor.getLong(dateColumn)
                 val mimeType = cursor.getString(mimeColumn)
                 val path = cursor.getString(pathColumn)
+                val bucketId = cursor.getLong(bucketId)
+                val bucketName = cursor.getString(bucketName)
 
                 val contentUri = ContentUris.withAppendedId(
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -74,12 +81,25 @@ class VideoRepository(private val context: Context) {
                         dateAdded = dateAdded,
                         mimeType = mimeType,
                         path = path,
-                        thumbnailUri = thumbnailUri
+                        thumbnailUri = thumbnailUri,
+                        bucketId = bucketId,
+                        bucketName = bucketName
                     )
                 )
             }
         }
 
-        videos
+        videos.groupBy { it.bucketId }
+            .map { (bucketId, videoItems) ->
+                VideoFolder(
+                    bucketId = bucketId,
+                    bucketName = videoItems.first().bucketName,
+                    videos = videoItems
+                )
+            }
+            .sortedBy { folder ->
+                folder.videos.maxOf { it.dateAdded }
+            }
     }
+
 }
