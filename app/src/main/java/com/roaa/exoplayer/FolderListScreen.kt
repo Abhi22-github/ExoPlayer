@@ -43,7 +43,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun VideoListScreen(
+fun FolderListScreen(
     videoFolderClick: (VideoFolder) -> Unit,
     modifier: Modifier = Modifier
 ) {
