@@ -1,8 +1,5 @@
 package com.roaa.exoplayer
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,14 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
@@ -37,7 +31,10 @@ import com.roaa.exoplayer.ui.PlayerUi
 import kotlinx.coroutines.delay
 
 @Composable
-fun MediaPickerScreen(modifier: Modifier = Modifier) {
+fun VideoPlayerScreen(
+    modifier: Modifier = Modifier,
+    videoItem: VideoItem
+) {
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -67,10 +64,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         mutableStateOf(false)
     }
 
-    // Button for selecting the video
-    var showVideoList by remember { mutableStateOf(true) }
-
-    var isSeeking by retain{
+    var isSeeking by retain {
         mutableStateOf(false)
     }
 
@@ -78,12 +72,8 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         mutableStateOf(false)
     }
 
-    // Creating Launcher for activity result to get URI
-    // after getting the URI feed it to player
-    val videoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        uri?.let {
+    LaunchedEffect(videoItem) {
+        videoItem.uri?.let {
             player.apply {
                 setMediaItem(MediaItem.fromUri(it))
                 prepare()
@@ -117,8 +107,8 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
     }
 
     LaunchedEffect(player, isPlaying, isSeeking) {
-        while(isPlaying) {
-            if(!isSeeking) {
+        while (isPlaying) {
+            if (!isSeeking) {
                 currentPosition = player.currentPosition.coerceAtLeast(0)
             }
             delay(250L)
@@ -127,7 +117,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
 
     LaunchedEffect(isPlayerUiVisible, isSeeking, isPlaying) {
         delay(5000L)
-        if(!isPlayerUiVisible && !isSeeking) {
+        if (!isPlayerUiVisible && !isSeeking) {
             isPlayerUiVisible = false
         }
     }
@@ -140,24 +130,6 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
 
-        if (showVideoList) {
-            //VideoListScreen()
-        } else {
-            Button(
-                onClick = {
-                    videoPickerLauncher.launch(
-                        PickVisualMediaRequest(
-                            mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
-                        )
-                    )
-                }
-            ) {
-                Text("Select Video")
-            }
-        }
-
-
-        // Showing the video in content Frame
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -192,6 +164,7 @@ fun MediaPickerScreen(modifier: Modifier = Modifier) {
                                     player.seekTo(0)
                                     player.play()
                                 }
+
                                 isPlaying -> player.pause()
                                 !isPlaying -> player.play()
                             }
