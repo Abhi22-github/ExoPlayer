@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                             ) + fadeIn() togetherWith slideOutHorizontally(
                                 targetOffsetX = { it },
                                 animationSpec = tween(350)
-                            ) + fadeOut()
+                            )
                         },
                         predictivePopTransitionSpec = {
                             // usually a shorter offset so the previous screen peeks in during swipe
