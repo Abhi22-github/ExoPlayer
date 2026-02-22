@@ -46,31 +46,32 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         transitionSpec = {
-
-
-                            val isForward = backStack.size > previousSize
-
-                            previousSize = backStack.size
-
-                            if (isForward) {
-                                slideInHorizontally(
-                                    initialOffsetX = { it },
-                                    animationSpec = tween(350)
-                                ) + fadeIn() togetherWith
-                                        slideOutHorizontally(
-                                            targetOffsetX = { -it / 4 },
-                                            animationSpec = tween(350)
-                                        ) + fadeOut()
-                            } else {
-                                slideInHorizontally(
-                                    initialOffsetX = { -it / 4 },
-                                    animationSpec = tween(350)
-                                ) + fadeIn() togetherWith
-                                        slideOutHorizontally(
-                                            targetOffsetX = { it },
-                                            animationSpec = tween(350)
-                                        ) + fadeOut()
-                            }
+                            slideInHorizontally(
+                                initialOffsetX = { it },
+                                animationSpec = tween(350)
+                            ) + fadeIn() togetherWith slideOutHorizontally(
+                                targetOffsetX = { -it / 4 },
+                                animationSpec = tween(350)
+                            ) + fadeOut()
+                        }, // normal back (pop)
+                        popTransitionSpec = {
+                            slideInHorizontally(
+                                initialOffsetX = { -it / 4 },
+                                animationSpec = tween(350)
+                            ) + fadeIn() togetherWith slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = tween(350)
+                            ) + fadeOut()
+                        },
+                        predictivePopTransitionSpec = {
+                            // usually a shorter offset so the previous screen peeks in during swipe
+                            slideInHorizontally(
+                                initialOffsetX = { -it / 4 },
+                                animationSpec = tween(350)
+                            ) + fadeIn() togetherWith slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = tween(350)
+                            )
                         },
                         entryProvider = entryProvider {
                             entry<Destinations.FolderListScreen> {
