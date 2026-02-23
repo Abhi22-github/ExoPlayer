@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -40,7 +42,13 @@ fun VideoPlayerScreen(
 
     // Creating player using retain composable
     val player = retain {
-        ExoPlayer.Builder(context.applicationContext).build()
+        ExoPlayer.Builder(context.applicationContext).build().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+                    .setUsage(C.USAGE_MEDIA).build(),
+                true
+            )
+        }
     }
 
     var isPlaying by retain {
