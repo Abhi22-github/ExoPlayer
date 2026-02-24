@@ -11,15 +11,17 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.roaa.exoplayer.navigation.Destinations
@@ -31,14 +33,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExoPlayerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                val textState = remember { TextFieldState() }
+                val results = remember { mutableStateOf(listOf<String>()) }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            modifier = Modifier.fillMaxWidth().statusBarsPadding(),
+                            onMoreClick = {}
+                        )
+                    }
+                ) { innerPadding ->
                     val backStack =
                         rememberSaveable { mutableStateListOf<Destinations>(Destinations.FolderListScreen) }
-                    var previousSize by remember { mutableStateOf(backStack.size) }
-
-
 
                     NavDisplay(
+                        modifier = Modifier.padding(top = 16.dp),
                         backStack = backStack,
                         onBack = {
                             if (backStack.size > 1) {

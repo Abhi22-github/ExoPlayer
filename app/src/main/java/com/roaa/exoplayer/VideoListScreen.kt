@@ -1,5 +1,6 @@
 package com.roaa.exoplayer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,16 +23,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun VideoListScreen(
     modifier: Modifier = Modifier,
     videoFolder: VideoFolder,
     videoItemClick: (VideoItem) -> Unit
 ) {
-    Scaffold() {
+    Scaffold(
+      modifier = modifier
+    ) {
         VideoList(
             videoList = videoFolder.videos,
-            modifier = Modifier.padding(it),
             videoItemClick = {
                 videoItemClick(it)
             }

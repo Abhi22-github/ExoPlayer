@@ -73,7 +73,12 @@ fun FolderListScreen(
     when {
         permissionState.allPermissionsGranted -> {
             if (isLoading) {
-                LoadingIndicator()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingIndicator()
+                }
             } else {
                 VideoList(
                     modifier = modifier,
