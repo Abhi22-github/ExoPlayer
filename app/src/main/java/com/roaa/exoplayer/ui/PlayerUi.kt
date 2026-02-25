@@ -3,12 +3,15 @@ package com.roaa.exoplayer.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -79,59 +82,70 @@ fun PlayerUi(
                 )
             }
         }
-
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 12.dp)
                 .align(Alignment.BottomCenter),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                text = formatDuration(currentPosition),
-                color = Color.White
-            )
-            Slider(
-                value = currentPosition.toFloat(),
-                onValueChange = { newPosition ->
-                    onSeekBarPositionChange(newPosition.toLong())
-                },
-                onValueChangeFinished = {
-                    onSeekBarPositionChangeFinish()
-                },
-                valueRange = 0f..duration.toFloat(),
+            Row(
                 modifier = Modifier
-                    .weight(1f),
-                thumb = {
-                    Box(
-                        modifier = Modifier
-                            .size(15.dp)
-                            .shadow(elevation = 4.dp, CircleShape)
-                            .background(Color.White)
-                    )
-                },
-                track = { sliderState ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = formatDuration(currentPosition),
+                    color = Color.White
+                )
+                Text(
+                    text = formatDuration(duration),
+                    color = Color.White
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                Slider(
+                    value = currentPosition.toFloat(),
+                    onValueChange = { newPosition ->
+                        onSeekBarPositionChange(newPosition.toLong())
+                    },
+                    onValueChangeFinished = {
+                        onSeekBarPositionChangeFinish()
+                    },
+                    valueRange = 0f..duration.toFloat(),
+                    modifier = Modifier
+                        .weight(1f),
+                    thumb = {
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth(sliderState.value / duration)
-                                .fillMaxHeight()
-                                .background(MaterialTheme.colorScheme.primary)
+                                .size(15.dp)
+                                .shadow(elevation = 4.dp, CircleShape)
+                                .background(Color.White)
                         )
+                    },
+                    track = { sliderState ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(sliderState.value / duration)
+                                    .fillMaxHeight()
+                                    .background(MaterialTheme.colorScheme.primary)
+                            )
+                        }
                     }
-                }
-            )
-            Text(
-                text = formatDuration(duration),
-                color = Color.White
-            )
+                )
+            }
         }
+
 
     }
 

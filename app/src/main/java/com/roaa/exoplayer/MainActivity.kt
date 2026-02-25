@@ -1,25 +1,30 @@
 package com.roaa.exoplayer
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.entryProvider
@@ -30,18 +35,28 @@ import com.roaa.exoplayer.ui.theme.ExoPlayerTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
         setContent {
             ExoPlayerTheme {
-                val textState = remember { TextFieldState() }
-                val results = remember { mutableStateOf(listOf<String>()) }
+                var shouldHideAppBar by rememberSaveable { mutableStateOf(false) }
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopAppBar(
-                            modifier = Modifier.fillMaxWidth().statusBarsPadding(),
-                            onMoreClick = {}
-                        )
+                        AnimatedVisibility(
+                            visible = !shouldHideAppBar,
+                            enter = fadeIn() + slideInVertically { -it },
+                            exit = fadeOut() + slideOutVertically { -it }
+                        ) {
+                            TopAppBar(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .statusBarsPadding(),
+                                onMoreClick = {}
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     val backStack =
@@ -85,6 +100,7 @@ class MainActivity : ComponentActivity() {
                         },
                         entryProvider = entryProvider {
                             entry<Destinations.FolderListScreen> {
+                                shouldHideAppBar = false
                                 FolderListScreen(
                                     modifier = Modifier.padding(innerPadding),
                                     videoFolderClick = { videoFolder ->
@@ -94,6 +110,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             entry<Destinations.VideoListScreen> {
+                                shouldHideAppBar = false
                                 VideoListScreen(
                                     modifier = Modifier.padding(innerPadding),
                                     videoFolder = it.videoFolder,
@@ -104,8 +121,9 @@ class MainActivity : ComponentActivity() {
                             }
 
                             entry<Destinations.VideoPlayerScreen> {
+                                shouldHideAppBar = true
                                 VideoPlayerScreen(
-                                    modifier = Modifier.padding(innerPadding),
+                                    modifier = Modifier,
                                     videoItem = it.videoItem
                                 )
                             }

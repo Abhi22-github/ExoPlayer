@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -133,8 +136,8 @@ fun VideoPlayerScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black),
+            .background(Color.Black)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
@@ -166,33 +169,41 @@ fun VideoPlayerScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    PlayerUi(
-                        playPauseClick = {
-                            when {
-                                !isPlaying && player.playbackState == Player.STATE_ENDED -> {
-                                    player.seekTo(0)
-                                    player.play()
-                                }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()      // top safe area
+                            .navigationBarsPadding()  // bottom safe area
+                            .padding(vertical = 16.dp) // custom top & bottom spacing
+                    ) {
+                        PlayerUi(
+                            playPauseClick = {
+                                when {
+                                    !isPlaying && player.playbackState == Player.STATE_ENDED -> {
+                                        player.seekTo(0)
+                                        player.play()
+                                    }
 
-                                isPlaying -> player.pause()
-                                !isPlaying -> player.play()
+                                    isPlaying -> player.pause()
+                                    !isPlaying -> player.play()
+                                }
+                            },
+                            modifier = Modifier,
+                            isBuffering = isBuffering,
+                            isPlaying = isPlaying,
+                            currentPosition = currentPosition,
+                            duration = totalDuration,
+                            onSeekBarPositionChange = {
+                                isSeeking = true
+                                seekPosition = it
+                                currentPosition = it
+                            },
+                            onSeekBarPositionChangeFinish = {
+                                player.seekTo(seekPosition)
+                                isSeeking = false
                             }
-                        },
-                        modifier = Modifier,
-                        isBuffering = isBuffering,
-                        isPlaying = isPlaying,
-                        currentPosition = currentPosition,
-                        duration = totalDuration,
-                        onSeekBarPositionChange = {
-                            isSeeking = true
-                            seekPosition = it
-                            currentPosition = it
-                        },
-                        onSeekBarPositionChangeFinish = {
-                            player.seekTo(seekPosition)
-                            isSeeking = false
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
