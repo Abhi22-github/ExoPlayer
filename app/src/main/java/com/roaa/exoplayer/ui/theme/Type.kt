@@ -1,34 +1,40 @@
 package com.roaa.exoplayer.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import com.roaa.exoplayer.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+val InterVariable = FontFamily(
+    Font(
+        resId = R.font.inter_variable,
+        weight = FontWeight.Normal
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+)
+
+// 2️⃣ Create base typography instance
+private val DefaultTypography = Typography()
+
+// 3️⃣ Override styles
+val AppTypography = DefaultTypography.copy(
+    bodyLarge = DefaultTypography.bodyLarge.copy(
+        fontFamily = InterVariable,
+        fontWeight = FontWeight.Normal
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+    bodyMedium = DefaultTypography.bodyMedium.copy(
+        fontFamily = InterVariable,
+        fontWeight = FontWeight.SemiBold
+    ),
+    bodySmall = DefaultTypography.bodySmall.copy(
+        fontFamily = InterVariable
+    ),
+    titleLarge = DefaultTypography.titleLarge.copy(
+        fontFamily = InterVariable,
+        fontWeight = FontWeight.SemiBold
+    ),
+    headlineMedium = DefaultTypography.headlineMedium.copy(
+        fontFamily = InterVariable,
+        fontWeight = FontWeight.Bold
     )
-    */
 )
