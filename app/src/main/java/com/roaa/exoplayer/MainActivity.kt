@@ -26,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.roaa.exoplayer.navigation.Destinations
@@ -63,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         rememberSaveable { mutableStateListOf<Destinations>(Destinations.FolderListScreen) }
 
                     NavDisplay(
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier,
                         backStack = backStack,
                         onBack = {
                             if (backStack.size > 1) {
