@@ -25,9 +25,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TopAppBar(
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+           ) {
         // Top row: app icon + title OR search field, plus actions
         Row(
             modifier = Modifier
@@ -44,11 +47,13 @@ fun TopAppBar(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    text = "PlayBox",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f).size(24.dp)
-                )
+            Text(
+                text = "PlayBox",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .size(24.dp)
+            )
 
 
             // More / overflow icon

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.roaa.exoplayer.R
+import com.roaa.exoplayer.ui.theme.primaryBlue
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -138,7 +139,7 @@ fun PlayerUi(
                                 modifier = Modifier
                                     .fillMaxWidth(sliderState.value / duration)
                                     .fillMaxHeight()
-                                    .background(MaterialTheme.colorScheme.primary)
+                                    .background(primaryBlue)
                             )
                         }
                     }

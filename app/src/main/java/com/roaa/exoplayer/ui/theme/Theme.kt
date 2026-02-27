@@ -32,6 +32,7 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+
 @Composable
 fun ExoPlayerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

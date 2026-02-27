@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +47,6 @@ fun FolderListScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Manifest.permission.READ_MEDIA_VIDEO)
@@ -117,8 +115,9 @@ fun VideoList(
     videoFolderClick: (VideoFolder) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberLazyGridState()
     LazyVerticalGrid(
-        state = rememberLazyGridState(),
+        state = scrollState,
         modifier = modifier
             .fillMaxSize()
             .padding(vertical = 0.dp, horizontal = 16.dp),
