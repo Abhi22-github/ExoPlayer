@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -159,7 +160,10 @@ fun VideoFolderItem(
             }
         }
         Text(
-            text = videoFolder.bucketName, maxLines = 1, overflow = TextOverflow.Ellipsis
+            text = videoFolder.bucketName,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall
         )
     }
 }
@@ -176,13 +180,13 @@ fun FolderThumbnailCollage(
     ) {
         when (previewList.size) {
             1 -> {
-                ThumbnailImage(videoItem = previewList[0], modifier = Modifier.fillMaxSize())
+                ThumbnailImageForFolder(videoItem = previewList[0], modifier = Modifier.fillMaxSize())
             }
 
             2 -> {
                 Row() {
                     previewList.forEach {
-                        ThumbnailImage(
+                        ThumbnailImageForFolder(
                             videoItem = it, modifier = Modifier.weight(1f)
                         )
                     }
@@ -197,12 +201,12 @@ fun FolderThumbnailCollage(
                         modifier = Modifier.weight(1f)
                     ) {
                         previewList.getOrNull(0)?.let {
-                            ThumbnailImage(
+                            ThumbnailImageForFolder(
                                 videoItem = it, modifier = Modifier.weight(1f)
                             )
                         }
                         previewList.getOrNull(1)?.let {
-                            ThumbnailImage(
+                            ThumbnailImageForFolder(
                                 videoItem = it, modifier = Modifier.weight(1f)
                             )
                         }
@@ -211,12 +215,12 @@ fun FolderThumbnailCollage(
                         modifier = Modifier.weight(1f)
                     ) {
                         previewList.getOrNull(2)?.let {
-                            ThumbnailImage(
+                            ThumbnailImageForFolder(
                                 videoItem = it, modifier = Modifier.weight(1f)
                             )
                         }
                         previewList.getOrNull(3)?.let {
-                            ThumbnailImage(
+                            ThumbnailImageForFolder(
                                 videoItem = it, modifier = Modifier.weight(1f)
                             )
                         }
@@ -230,7 +234,7 @@ fun FolderThumbnailCollage(
 }
 
 @Composable
-fun ThumbnailImage(modifier: Modifier = Modifier, videoItem: VideoItem) {
+fun ThumbnailImageForFolder(modifier: Modifier = Modifier, videoItem: VideoItem) {
     val context = LocalContext.current
     AsyncImage(
         model = ImageRequest.Builder(context)

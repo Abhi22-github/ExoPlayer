@@ -14,14 +14,18 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -87,16 +91,36 @@ fun VideoItemView(
                     .aspectRatio(16f / 9f)
                     .clip(RoundedCornerShape(12.dp))
             ) {
-                ThumbnailImage(videoItem = videoItem)
+                ThumbnailImageForVideo(videoItem = videoItem)
             }
         }
         Text(
-            text = videoItem.name, maxLines = 1, overflow = TextOverflow.Ellipsis
+            text = videoItem.name,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall
         )
         Text(
-            text = videoItem.duration.toString(), maxLines = 1, overflow = TextOverflow.Ellipsis
+            text = videoItem.duration.toString(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodySmall
         )
     }
+}
+
+@Composable
+fun ThumbnailImageForVideo(modifier: Modifier = Modifier, videoItem: VideoItem) {
+    val context = LocalContext.current
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(videoItem.uri)
+            .crossfade(true)
+            .build(),
+        contentDescription = videoItem.name,
+        modifier = modifier.aspectRatio(16f / 9f),
+        contentScale = ContentScale.Crop
+    )
 }
 
 
