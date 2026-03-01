@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -15,19 +16,20 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.roaa.exoplayer.navigation.Destinations
@@ -41,18 +43,23 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
+        val viewModel: MainViewModel by viewModels()
         setContent {
             ExoPlayerTheme {
+                // initializing the repo with context
+                val context = LocalContext.current
+                viewModel.initializeVideoRepository(VideoRepository(context))
+
+
                 val backStack =
-                    rememberSaveable { mutableStateListOf<Destinations>(Destinations.FolderListScreen) }
+                    remember { mutableStateListOf<Destinations>(Destinations.FolderListScreen) }
                 val currentDestination by remember { derivedStateOf { backStack.lastOrNull() } }
                 val shouldHideAppBar by remember { derivedStateOf { currentDestination is Destinations.VideoPlayerScreen } }
-                val scrollBehavior = if (currentDestination !is Destinations.VideoPlayerScreen) {
-                    TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-                } else null
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
                     topBar = {
                         AnimatedVisibility(
                             visible = !shouldHideAppBar,
@@ -108,19 +115,20 @@ class MainActivity : ComponentActivity() {
                             entry<Destinations.FolderListScreen> {
                                 FolderListScreen(
                                     modifier = Modifier.padding(innerPadding),
-                                    videoFolderClick = { videoFolder ->
-                                        backStack.add(Destinations.VideoListScreen(videoFolder))
-                                    }
+                                    videoFolderClick = {
+                                        backStack.add(Destinations.VideoListScreen)
+                                    },
+                                    viewModel = viewModel
                                 )
                             }
 
                             entry<Destinations.VideoListScreen> {
                                 VideoListScreen(
                                     modifier = Modifier.padding(innerPadding),
-                                    videoFolder = it.videoFolder,
                                     videoItemClick = { videoItem ->
                                         backStack.add(Destinations.VideoPlayerScreen(videoItem))
-                                    }
+                                    },
+                                    viewModel = viewModel
                                 )
                             }
 

@@ -1,7 +1,6 @@
 package com.roaa.exoplayer.navigation
 
 import androidx.navigation3.runtime.NavKey
-import com.roaa.exoplayer.VideoFolder
 import com.roaa.exoplayer.VideoItem
 import kotlinx.serialization.Serializable
 
@@ -12,7 +11,7 @@ sealed interface Destinations : NavKey {
     data object FolderListScreen : Destinations
 
     @Serializable
-    data class VideoListScreen(val videoFolder: VideoFolder) : Destinations
+    data object VideoListScreen : Destinations
 
     @Serializable
     data class VideoPlayerScreen(val videoItem: VideoItem) : Destinations

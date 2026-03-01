@@ -26,9 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,36 +34,36 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FolderListScreen(
-    videoFolderClick: (VideoFolder) -> Unit,
-    modifier: Modifier = Modifier
+    videoFolderClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
-    val context = LocalContext.current
-
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Manifest.permission.READ_MEDIA_VIDEO)
     } else {
         listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
+    val scope = rememberCoroutineScope()
+
     val permissionState = rememberMultiplePermissionsState(permission)
 
-    var videos by remember { mutableStateOf<List<VideoFolder>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(false) }
+    val videos by viewModel.videos.collectAsStateWithLifecycle(emptyList())
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle(false)
 
     LaunchedEffect(permissionState.allPermissionsGranted) {
         if (permissionState.allPermissionsGranted) {
-            isLoading = true
-            val repository = VideoRepository(context)
-            videos = repository.getAllVideo()
-            isLoading = false
+            viewModel.loadVideos()
         }
     }
 
@@ -83,7 +81,10 @@ fun FolderListScreen(
                     modifier = modifier,
                     videoFolderList = videos,
                     videoFolderClick = { videoFolder ->
-                        videoFolderClick(videoFolder)
+                        scope.launch {
+                            viewModel.setVideoFolder(videoFolder)
+                        }
+                        videoFolderClick()
                     })
             }
         }
@@ -180,7 +181,10 @@ fun FolderThumbnailCollage(
     ) {
         when (previewList.size) {
             1 -> {
-                ThumbnailImageForFolder(videoItem = previewList[0], modifier = Modifier.fillMaxSize())
+                ThumbnailImageForFolder(
+                    videoItem = previewList[0],
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
             2 -> {
@@ -243,6 +247,6 @@ fun ThumbnailImageForFolder(modifier: Modifier = Modifier, videoItem: VideoItem)
             .build(),
         contentDescription = videoItem.name,
         modifier = modifier.aspectRatio(16f / 9f),
-        contentScale = ContentScale.FillWidth
+        contentScale = ContentScale.Crop
     )
 }
