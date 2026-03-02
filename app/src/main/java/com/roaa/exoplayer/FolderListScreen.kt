@@ -151,11 +151,13 @@ fun VideoFolderItem(
                 .clickable {
                     videoFolderClick(videoFolder)
                 }
-                .clip(RoundedCornerShape(12.dp))) {
+                .clip(RoundedCornerShape(6.dp)),
+            shape = RoundedCornerShape(6.dp)
+        ) {
             Box(
                 modifier = Modifier
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(6.dp))
             ) {
                 FolderThumbnailCollage(videoList = videoFolder.videos)
             }

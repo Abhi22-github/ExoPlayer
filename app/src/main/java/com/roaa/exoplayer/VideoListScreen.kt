@@ -88,11 +88,13 @@ fun VideoItemView(
                 .clickable {
                     videoItemClick(videoItem)
                 }
-                .clip(RoundedCornerShape(12.dp))) {
+                .clip(RoundedCornerShape(6.dp)),
+            shape = RoundedCornerShape(6.dp)
+        ) {
             Box(
                 modifier = Modifier
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(6.dp))
             ) {
                 ThumbnailImageForVideo(videoItem = videoItem)
             }

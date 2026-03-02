@@ -26,10 +26,16 @@ class VideoRepository(private val context: Context) {
 
         val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
 
+        val selection = """
+            ${MediaStore.Video.Media.DURATION} > 0 AND
+            ${MediaStore.Video.Media.SIZE} > 102400 AND
+            ${MediaStore.Video.Media.MIME_TYPE} LIKE 'video/%'
+            """.trimIndent()
+
         context.contentResolver.query(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             projection,
-            null,
+            selection,
             null,
             sortOrder
         )?.use { cursor ->
