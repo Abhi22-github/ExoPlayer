@@ -26,11 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.roaa.exoplayer.navigation.Destinations
 import com.roaa.exoplayer.ui.theme.ExoPlayerTheme
@@ -43,16 +44,23 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
+        WindowCompat.getInsetsController(window, window.decorView)
+            ?.let { controller ->
+                controller.isAppearanceLightStatusBars = true
+                controller.isAppearanceLightNavigationBars = true
+            }
+
         val viewModel: MainViewModel by viewModels()
         setContent {
             ExoPlayerTheme {
+
+
                 // initializing the repo with context
                 val context = LocalContext.current
                 viewModel.initializeVideoRepository(VideoRepository(context))
 
 
-                val backStack =
-                    remember { mutableStateListOf<Destinations>(Destinations.FolderListScreen) }
+                val backStack = rememberNavBackStack(Destinations.FolderListScreen)
                 val currentDestination by remember { derivedStateOf { backStack.lastOrNull() } }
                 val shouldHideAppBar by remember { derivedStateOf { currentDestination is Destinations.VideoPlayerScreen } }
 
@@ -126,7 +134,8 @@ class MainActivity : ComponentActivity() {
                                 VideoListScreen(
                                     modifier = Modifier.padding(innerPadding),
                                     videoItemClick = { videoItem ->
-                                        backStack.add(Destinations.VideoPlayerScreen(videoItem))
+                                        viewModel.setVideoItem(videoItem)
+                                        backStack.add(Destinations.VideoPlayerScreen)
                                     },
                                     viewModel = viewModel
                                 )
@@ -135,7 +144,7 @@ class MainActivity : ComponentActivity() {
                             entry<Destinations.VideoPlayerScreen> {
                                 VideoPlayerScreen(
                                     modifier = Modifier,
-                                    videoItem = it.videoItem
+                                    viewModel = viewModel
                                 )
                             }
                         }

@@ -19,6 +19,10 @@ class MainViewModel : ViewModel() {
         MutableStateFlow(VideoFolder(0, "", emptyList()))
     val currentVideoFolder: StateFlow<VideoFolder> = _currentVideoFolder
 
+    private val _currentVideoItem: MutableStateFlow<VideoItem> =
+        MutableStateFlow(VideoItem())
+    val currentVideoItem: StateFlow<VideoItem> = _currentVideoItem
+
 
     fun initializeVideoRepository(videoRepository: VideoRepository) {
         this.videoRepository = videoRepository
@@ -37,6 +41,12 @@ class MainViewModel : ViewModel() {
     fun setVideoFolder(videoFolder: VideoFolder) {
         viewModelScope.launch {
             _currentVideoFolder.emit(videoFolder)
+        }
+    }
+
+    fun setVideoItem(videoItem: VideoItem) {
+        viewModelScope.launch {
+            _currentVideoItem.emit(videoItem)
         }
     }
 }

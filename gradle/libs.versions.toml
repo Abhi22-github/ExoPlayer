@@ -50,6 +50,8 @@ navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", vers
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
 
 [bundles]
 media3 = [

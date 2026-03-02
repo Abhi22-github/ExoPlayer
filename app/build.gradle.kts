@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -62,4 +63,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }

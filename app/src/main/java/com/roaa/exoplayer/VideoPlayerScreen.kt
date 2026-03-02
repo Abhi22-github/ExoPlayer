@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -39,11 +39,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun VideoPlayerScreen(
     modifier: Modifier = Modifier,
-    videoItem: VideoItem
+    viewModel: MainViewModel
 ) {
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val videoItem by viewModel.currentVideoItem.collectAsStateWithLifecycle()
 
     // Creating player using retain composable
     val player = retain {
