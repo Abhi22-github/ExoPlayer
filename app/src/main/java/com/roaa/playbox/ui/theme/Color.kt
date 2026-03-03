@@ -1,4 +1,4 @@
-package com.roaa.exoplayer.ui.theme
+package com.roaa.playbox.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

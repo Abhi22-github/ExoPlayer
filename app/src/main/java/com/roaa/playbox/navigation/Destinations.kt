@@ -1,4 +1,4 @@
-package com.roaa.exoplayer.navigation
+package com.roaa.playbox.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

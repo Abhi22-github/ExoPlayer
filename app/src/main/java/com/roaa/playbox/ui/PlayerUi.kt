@@ -1,4 +1,4 @@
-package com.roaa.exoplayer.ui
+package com.roaa.playbox.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,8 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.roaa.exoplayer.R
-import com.roaa.exoplayer.ui.theme.primaryBlue
+import com.roaa.playbox.R
+import com.roaa.playbox.ui.theme.primaryBlue
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)

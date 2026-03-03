@@ -1,4 +1,4 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
 import android.content.ContentUris
 import android.content.Context

@@ -1,4 +1,4 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

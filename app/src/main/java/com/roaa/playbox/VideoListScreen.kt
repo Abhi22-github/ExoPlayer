@@ -1,4 +1,4 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable

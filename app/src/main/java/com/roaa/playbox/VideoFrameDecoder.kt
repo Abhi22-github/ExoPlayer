@@ -1,6 +1,5 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -10,7 +9,6 @@ import coil.decode.Decoder
 import coil.decode.ImageSource
 import coil.fetch.SourceResult
 import coil.request.Options
-import okio.BufferedSource
 
 class VideoFrameDecoder(
     private val source: ImageSource,

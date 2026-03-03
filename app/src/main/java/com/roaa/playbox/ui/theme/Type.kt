@@ -1,10 +1,10 @@
-package com.roaa.exoplayer.ui.theme
+package com.roaa.playbox.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.roaa.exoplayer.R
+import com.roaa.playbox.R
 
 val InterVariable = FontFamily(
     Font(

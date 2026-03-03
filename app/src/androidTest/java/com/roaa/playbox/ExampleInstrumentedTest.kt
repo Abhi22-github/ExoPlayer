@@ -1,4 +1,4 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

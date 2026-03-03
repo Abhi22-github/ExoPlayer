@@ -1,4 +1,4 @@
-package com.roaa.exoplayer
+package com.roaa.playbox
 
 import android.graphics.Color
 import android.os.Bundle
@@ -33,8 +33,8 @@ import androidx.core.view.WindowCompat
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.roaa.exoplayer.navigation.Destinations
-import com.roaa.exoplayer.ui.theme.ExoPlayerTheme
+import com.roaa.playbox.navigation.Destinations
+import com.roaa.playbox.ui.theme.ExoPlayerTheme
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
