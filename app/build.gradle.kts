@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.roaa.exoplayer"
+    namespace = "com.roaa.playbox"
     compileSdk {
         version = release(36)
     }
@@ -63,5 +63,5 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation(libs.kotlinx.serialization.json)
 }
