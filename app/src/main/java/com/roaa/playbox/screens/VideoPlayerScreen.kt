@@ -33,8 +33,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
-import com.roaa.playbox.viewmodels.MainViewModel
 import com.roaa.playbox.ui.PlayerUi
+import com.roaa.playbox.viewmodels.MainViewModel
 import kotlinx.coroutines.delay
 
 @Composable
