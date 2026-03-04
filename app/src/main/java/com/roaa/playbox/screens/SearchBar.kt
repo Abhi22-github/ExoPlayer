@@ -1,4 +1,4 @@
-package com.roaa.playbox
+package com.roaa.playbox.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.roaa.playbox.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

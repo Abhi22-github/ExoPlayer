@@ -1,4 +1,4 @@
-package com.roaa.playbox
+package com.roaa.playbox.models
 
 import android.net.Uri
 

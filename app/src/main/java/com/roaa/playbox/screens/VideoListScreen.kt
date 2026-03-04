@@ -1,4 +1,4 @@
-package com.roaa.playbox
+package com.roaa.playbox.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.roaa.playbox.viewmodels.MainViewModel
+import com.roaa.playbox.models.VideoItem
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

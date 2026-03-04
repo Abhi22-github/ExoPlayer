@@ -34,7 +34,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.roaa.playbox.navigation.Destinations
+import com.roaa.playbox.screens.FolderListScreen
+import com.roaa.playbox.screens.TopAppBar
+import com.roaa.playbox.screens.VideoListScreen
+import com.roaa.playbox.screens.VideoPlayerScreen
 import com.roaa.playbox.ui.theme.ExoPlayerTheme
+import com.roaa.playbox.utils.VideoRepository
+import com.roaa.playbox.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)

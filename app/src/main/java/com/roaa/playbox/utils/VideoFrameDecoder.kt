@@ -1,6 +1,8 @@
-package com.roaa.playbox
+package com.roaa.playbox.utils
 
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import coil.ImageLoader
@@ -59,6 +61,6 @@ class VideoFrameDecoder(
     }
 }
 
-private fun Bitmap.toDrawable(resources: android.content.res.Resources): android.graphics.drawable.BitmapDrawable {
-    return android.graphics.drawable.BitmapDrawable(resources, this)
+private fun Bitmap.toDrawable(resources: Resources): BitmapDrawable {
+    return BitmapDrawable(resources, this)
 }
