@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ExoPlayer"
+rootProject.name = "PlayBox"
 include(":app")
  

@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
+// Define version components
+val versionMajor = 1
+val versionMinor = 1
+val versionPatch = 0
+val isBeta = true
+
 android {
     namespace = "com.roaa.playbox"
     compileSdk {
@@ -11,18 +17,29 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.roaa.exoplayer"
+        applicationId = "com.roaa.playbox"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
+        versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName =
+            "${versionMajor}.${versionMinor}.${versionPatch}" + if (isBeta) "-beta" else ""
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue("string", "app_name", "(Debug)")
+        }
+
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -35,8 +52,20 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+        resValues = true
     }
 }
+
+tasks.withType<com.android.build.gradle.tasks.PackageAndroidArtifact> {
+    // no-op
+}
+
+// Add this at top level
+val versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
+val versionName = "${versionMajor}.${versionMinor}.${versionPatch}" + if (isBeta) "-beta" else ""
+
+base.archivesName.set("pb-v$versionCode($versionName)")
 
 dependencies {
     implementation(libs.androidx.core.ktx)
