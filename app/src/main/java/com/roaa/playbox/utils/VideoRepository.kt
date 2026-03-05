@@ -54,14 +54,18 @@ class VideoRepository(private val context: Context) {
 
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
-                val name = cursor.getString(nameColumn)
+                //val name = cursor.getString(nameColumn)
                 val duration = cursor.getLong(durationColumn)
                 val size = cursor.getLong(sizeColumn)
                 val dateAdded = cursor.getLong(dateColumn)
-                val mimeType = cursor.getString(mimeColumn)
+                //val mimeType = cursor.getString(mimeColumn)
                 val path = cursor.getString(pathColumn)
                 val bucketId = cursor.getLong(bucketId)
-                val bucketName = cursor.getString(bucketName)
+                //val bucketName = cursor.getString(bucketName)
+
+                val name = cursor.getString(nameColumn) ?: "Unknown"
+                val mimeType = cursor.getString(mimeColumn) ?: "video/*"
+                val bucketName = cursor.getString(bucketName) ?: "Internal Storage"
 
                 val contentUri = ContentUris.withAppendedId(
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,

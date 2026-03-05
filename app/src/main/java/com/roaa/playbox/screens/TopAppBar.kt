@@ -2,6 +2,7 @@ package com.roaa.playbox.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +32,7 @@ import com.roaa.playbox.composition.localViewModel
 @Composable
 fun TopAppBar(
     onMoreClick: () -> Unit,
+    onBackButtonClick:() -> Unit,
     shouldShowBackButton: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
@@ -57,7 +59,7 @@ fun TopAppBar(
                     Image(
                         painter = painterResource(R.drawable.app_icon),
                         contentDescription = "App icon",
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(36.dp),
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -74,7 +76,11 @@ fun TopAppBar(
                         painter = painterResource(R.drawable.round_back),
                         contentDescription = "App icon",
                         tint = Color.Gray,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                onBackButtonClick()
+                            },
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))

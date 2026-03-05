@@ -17,6 +17,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,11 +25,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation3.runtime.entryProvider
@@ -37,7 +40,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.navigation.Destinations
 import com.roaa.playbox.screens.FolderListScreen
-import com.roaa.playbox.screens.TopAppBar
+import com.roaa.playbox.screens.PlayBoxTopAppBar
 import com.roaa.playbox.screens.VideoListScreen
 import com.roaa.playbox.screens.VideoPlayerScreen
 import com.roaa.playbox.ui.theme.ExoPlayerTheme
@@ -77,26 +80,42 @@ class MainActivity : ComponentActivity() {
                 // for changing the App name and icon to back button
                 val shouldShowBackButton by remember { derivedStateOf { currentDestination is Destinations.VideoListScreen } }
 
+                fun navigateBack() {
+                    if (backStack.size > 1) {
+                        backStack.removeLastOrNull()
+                    }
+                }
+
+                val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
                 CompositionLocalProvider(
                     localViewModel provides viewModel
                 ) {
                     Scaffold(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
+                            .background(MaterialTheme.colorScheme.background)
+                            .nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
+
                             AnimatedVisibility(
                                 visible = !shouldHideAppBar,
                                 enter = fadeIn() + slideInVertically { -it },
                                 exit = fadeOut() + slideOutVertically { -it }
                             ) {
-                                TopAppBar(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .statusBarsPadding(),
-                                    shouldShowBackButton = shouldShowBackButton,
-                                    onMoreClick = {}
-                                )
+                                Column() {
+                                    PlayBoxTopAppBar(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .statusBarsPadding(),
+                                        shouldShowBackButton = shouldShowBackButton,
+                                        onMoreClick = {},
+                                        scrollBehavior = scrollBehavior,
+                                        onBackButtonClick = {
+                                            navigateBack()
+                                        }
+                                    )
+                                }
                             }
                         }
                     ) { innerPadding ->
@@ -104,9 +123,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier,
                             backStack = backStack,
                             onBack = {
-                                if (backStack.size > 1) {
-                                    backStack.removeLastOrNull()
-                                }
+                                navigateBack()
                             },
                             transitionSpec = {
                                 slideInHorizontally(
