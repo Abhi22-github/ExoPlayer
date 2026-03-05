@@ -28,17 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.models.VideoItem
 import com.roaa.playbox.utils.toTimeFormat
-import com.roaa.playbox.viewmodels.MainViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun VideoListScreen(
     modifier: Modifier = Modifier,
     videoItemClick: (VideoItem) -> Unit,
-    viewModel: MainViewModel
 ) {
+    val viewModel = localViewModel.current
     val videoFolder by viewModel.currentVideoFolder.collectAsStateWithLifecycle()
     Scaffold(
       modifier = modifier

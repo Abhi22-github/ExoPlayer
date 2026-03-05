@@ -39,6 +39,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.viewmodels.MainViewModel
 import com.roaa.playbox.models.VideoFolder
 import com.roaa.playbox.models.VideoItem
@@ -49,8 +50,9 @@ import kotlinx.coroutines.launch
 fun FolderListScreen(
     videoFolderClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel
 ) {
+    val viewModel = localViewModel.current
+
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Manifest.permission.READ_MEDIA_VIDEO)
     } else {

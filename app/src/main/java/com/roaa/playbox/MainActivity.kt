@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +34,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.navigation.Destinations
 import com.roaa.playbox.screens.FolderListScreen
 import com.roaa.playbox.screens.TopAppBar
@@ -68,94 +70,100 @@ class MainActivity : ComponentActivity() {
 
                 val backStack = rememberNavBackStack(Destinations.FolderListScreen)
                 val currentDestination by remember { derivedStateOf { backStack.lastOrNull() } }
+
+                // for hiding the app bar.
                 val shouldHideAppBar by remember { derivedStateOf { currentDestination is Destinations.VideoPlayerScreen } }
 
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    topBar = {
-                        AnimatedVisibility(
-                            visible = !shouldHideAppBar,
-                            enter = fadeIn() + slideInVertically { -it },
-                            exit = fadeOut() + slideOutVertically { -it }
-                        ) {
-                            TopAppBar(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .statusBarsPadding(),
-                                onMoreClick = {}
-                            )
+                // for changing the App name and icon to back button
+                val shouldShowBackButton by remember { derivedStateOf { currentDestination is Destinations.VideoListScreen } }
+
+                CompositionLocalProvider(
+                    localViewModel provides viewModel
+                ) {
+                    Scaffold(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        topBar = {
+                            AnimatedVisibility(
+                                visible = !shouldHideAppBar,
+                                enter = fadeIn() + slideInVertically { -it },
+                                exit = fadeOut() + slideOutVertically { -it }
+                            ) {
+                                TopAppBar(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .statusBarsPadding(),
+                                    shouldShowBackButton = shouldShowBackButton,
+                                    onMoreClick = {}
+                                )
+                            }
                         }
+                    ) { innerPadding ->
+                        NavDisplay(
+                            modifier = Modifier,
+                            backStack = backStack,
+                            onBack = {
+                                if (backStack.size > 1) {
+                                    backStack.removeLastOrNull()
+                                }
+                            },
+                            transitionSpec = {
+                                slideInHorizontally(
+                                    initialOffsetX = { it },
+                                    animationSpec = tween(350)
+                                ) + fadeIn() togetherWith slideOutHorizontally(
+                                    targetOffsetX = { -it / 4 },
+                                    animationSpec = tween(350)
+                                ) + fadeOut()
+                            }, // normal back (pop)
+                            popTransitionSpec = {
+                                slideInHorizontally(
+                                    initialOffsetX = { -it / 4 },
+                                    animationSpec = tween(350)
+                                ) + fadeIn() togetherWith slideOutHorizontally(
+                                    targetOffsetX = { it },
+                                    animationSpec = tween(350)
+                                )
+                            },
+                            predictivePopTransitionSpec = {
+                                // usually a shorter offset so the previous screen peeks in during swipe
+                                slideInHorizontally(
+                                    initialOffsetX = { -it / 4 },
+                                    animationSpec = tween(350)
+                                ) + fadeIn() togetherWith slideOutHorizontally(
+                                    targetOffsetX = { it },
+                                    animationSpec = tween(350)
+                                )
+                            },
+                            entryProvider = entryProvider {
+                                entry<Destinations.FolderListScreen> {
+                                    FolderListScreen(
+                                        modifier = Modifier.padding(innerPadding),
+                                        videoFolderClick = {
+                                            backStack.add(Destinations.VideoListScreen)
+                                        }
+                                    )
+                                }
+
+                                entry<Destinations.VideoListScreen> {
+                                    VideoListScreen(
+                                        modifier = Modifier.padding(innerPadding),
+                                        videoItemClick = { videoItem ->
+                                            viewModel.setVideoItem(videoItem)
+                                            backStack.add(Destinations.VideoPlayerScreen)
+                                        }
+                                    )
+                                }
+
+                                entry<Destinations.VideoPlayerScreen> {
+                                    VideoPlayerScreen(
+                                        modifier = Modifier
+                                    )
+                                }
+                            }
+                        )
                     }
-                ) { innerPadding ->
-                    NavDisplay(
-                        modifier = Modifier,
-                        backStack = backStack,
-                        onBack = {
-                            if (backStack.size > 1) {
-                                backStack.removeLastOrNull()
-                            }
-                        },
-                        transitionSpec = {
-                            slideInHorizontally(
-                                initialOffsetX = { it },
-                                animationSpec = tween(350)
-                            ) + fadeIn() togetherWith slideOutHorizontally(
-                                targetOffsetX = { -it / 4 },
-                                animationSpec = tween(350)
-                            ) + fadeOut()
-                        }, // normal back (pop)
-                        popTransitionSpec = {
-                            slideInHorizontally(
-                                initialOffsetX = { -it / 4 },
-                                animationSpec = tween(350)
-                            ) + fadeIn() togetherWith slideOutHorizontally(
-                                targetOffsetX = { it },
-                                animationSpec = tween(350)
-                            )
-                        },
-                        predictivePopTransitionSpec = {
-                            // usually a shorter offset so the previous screen peeks in during swipe
-                            slideInHorizontally(
-                                initialOffsetX = { -it / 4 },
-                                animationSpec = tween(350)
-                            ) + fadeIn() togetherWith slideOutHorizontally(
-                                targetOffsetX = { it },
-                                animationSpec = tween(350)
-                            )
-                        },
-                        entryProvider = entryProvider {
-                            entry<Destinations.FolderListScreen> {
-                                FolderListScreen(
-                                    modifier = Modifier.padding(innerPadding),
-                                    videoFolderClick = {
-                                        backStack.add(Destinations.VideoListScreen)
-                                    },
-                                    viewModel = viewModel
-                                )
-                            }
-
-                            entry<Destinations.VideoListScreen> {
-                                VideoListScreen(
-                                    modifier = Modifier.padding(innerPadding),
-                                    videoItemClick = { videoItem ->
-                                        viewModel.setVideoItem(videoItem)
-                                        backStack.add(Destinations.VideoPlayerScreen)
-                                    },
-                                    viewModel = viewModel
-                                )
-                            }
-
-                            entry<Destinations.VideoPlayerScreen> {
-                                VideoPlayerScreen(
-                                    modifier = Modifier,
-                                    viewModel = viewModel
-                                )
-                            }
-                        }
-                    )
-
                 }
             }
         }
