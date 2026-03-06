@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -49,15 +48,7 @@ fun PlayerUi(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Transparent,
-                        Color.Black
-                    )
-                )
-            ),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
 
@@ -67,21 +58,6 @@ fun PlayerUi(
                 modifier = Modifier
                     .size(20.dp)
             )
-        } else {
-            IconButton(
-                onClick = playPauseClick,
-                modifier = Modifier
-                    .size(100.dp)
-            ) {
-                val icon = if (isPlaying) R.drawable.pause_icon else R.drawable.play_icon
-                Icon(
-                    modifier = Modifier.size(48.dp),
-                    imageVector =
-                        ImageVector.vectorResource(icon),
-                    contentDescription = "play/pause",
-                    tint = Color.White
-                )
-            }
         }
         Column(
             modifier = Modifier
@@ -97,11 +73,13 @@ fun PlayerUi(
             ) {
                 Text(
                     text = formatDuration(currentPosition),
-                    color = Color.White
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodySmall
                 )
                 Text(
                     text = formatDuration(duration),
-                    color = Color.White
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
             Row(
@@ -144,6 +122,53 @@ fun PlayerUi(
                         }
                     }
                 )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .size(48.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector =
+                            ImageVector.vectorResource(R.drawable.lock_lanscape),
+                        contentDescription = "lock/unlock",
+                        tint = Color.White
+                    )
+                }
+                IconButton(
+                    onClick = playPauseClick,
+                    modifier = Modifier
+                        .size(48.dp)
+                ) {
+                    val icon = if (isPlaying) R.drawable.pause_icon else R.drawable.play_icon
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector =
+                            ImageVector.vectorResource(icon),
+                        contentDescription = "play/pause",
+                        tint = Color.White
+                    )
+                }
+                IconButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .size(48.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector =
+                            ImageVector.vectorResource(R.drawable.aspect_ratio_icon),
+                        contentDescription = "lock/unlock",
+                        tint = Color.White
+                    )
+                }
             }
         }
 

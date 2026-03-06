@@ -1,9 +1,7 @@
 package com.roaa.playbox
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -33,10 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowCompat
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.roaa.playbox.Actions.TopAppBarActions
 import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.navigation.Destinations
 import com.roaa.playbox.screens.FolderListScreen
@@ -52,14 +50,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+//            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+//            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
-        WindowCompat.getInsetsController(window, window.decorView)
-            ?.let { controller ->
-                controller.isAppearanceLightStatusBars = true
-                controller.isAppearanceLightNavigationBars = true
-            }
+//        WindowCompat.getInsetsController(window, window.decorView)
+//            ?.let { controller ->
+//                controller.isAppearanceLightStatusBars = true
+//                controller.isAppearanceLightNavigationBars = true
+//            }
 
         val viewModel: MainViewModel by viewModels()
         setContent {
@@ -109,11 +107,16 @@ class MainActivity : ComponentActivity() {
                                             .fillMaxWidth()
                                             .statusBarsPadding(),
                                         shouldShowBackButton = shouldShowBackButton,
-                                        onMoreClick = {},
                                         scrollBehavior = scrollBehavior,
-                                        onBackButtonClick = {
-                                            navigateBack()
-                                        }
+                                        actions = {
+                                            when (it) {
+                                                TopAppBarActions.BackButtonClicked -> {
+                                                    navigateBack()
+                                                }
+
+                                                TopAppBarActions.MoreButtonClicked -> {}
+                                            }
+                                        },
                                     )
                                 }
                             }

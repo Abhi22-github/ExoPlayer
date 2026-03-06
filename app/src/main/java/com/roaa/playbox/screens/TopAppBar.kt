@@ -21,14 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.roaa.playbox.Actions.TopAppBarActions
 import com.roaa.playbox.R
 import com.roaa.playbox.composition.localViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayBoxTopAppBar(
-    onMoreClick: () -> Unit,
-    onBackButtonClick: () -> Unit,
+    actions: (TopAppBarActions) -> Unit,
     shouldShowBackButton: Boolean = false,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
@@ -67,7 +67,7 @@ fun PlayBoxTopAppBar(
 
         navigationIcon = {
             if (shouldShowBackButton) {
-                IconButton(onClick = onBackButtonClick) {
+                IconButton(onClick = { actions(TopAppBarActions.BackButtonClicked) }) {
                     Icon(
                         painter = painterResource(R.drawable.round_back),
                         contentDescription = "Back"
@@ -77,7 +77,7 @@ fun PlayBoxTopAppBar(
         },
 
         actions = {
-            IconButton(onClick = onMoreClick) {
+            IconButton(onClick = { actions(TopAppBarActions.MoreButtonClicked) }) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "More"

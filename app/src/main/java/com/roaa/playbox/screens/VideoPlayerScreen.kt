@@ -1,5 +1,9 @@
 package com.roaa.playbox.screens
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.view.OrientationEventListener
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,13 +15,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.RetainedEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
@@ -36,7 +42,9 @@ import androidx.media3.ui.compose.ContentFrame
 import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.ui.PlayerUi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@Suppress("EffectKeys")
 @Composable
 fun VideoPlayerScreen(
     modifier: Modifier = Modifier,
@@ -44,6 +52,46 @@ fun VideoPlayerScreen(
 
     val context = LocalContext.current
     val viewModel = localViewModel.current
+    val activity = context as Activity
+    var lastOrientation by remember { mutableStateOf<Int?>(null) }
+    val scope = rememberCoroutineScope()
+    var isOrientationLocker by remember { mutableStateOf(false) }
+
+    val orientationListener = remember {
+        object : OrientationEventListener(context) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) return
+
+                val newOrientation = when (orientation) {
+                    in 330..360, in 0..30 -> Configuration.ORIENTATION_PORTRAIT
+                    in 60..120 -> Configuration.ORIENTATION_LANDSCAPE
+                    in 150..210 -> Configuration.ORIENTATION_PORTRAIT
+                    in 240..300 -> Configuration.ORIENTATION_LANDSCAPE
+                    else -> null
+                }
+                if (newOrientation != null && newOrientation != lastOrientation) {
+                    scope.launch {
+                        delay(1000)
+                        lastOrientation = newOrientation
+                        activity.requestedOrientation =
+                            if (newOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                            } else {
+                                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                            }
+                    }
+                }
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        orientationListener.enable()
+        onDispose {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            orientationListener.disable()
+        }
+    }
 
     val videoItem by viewModel.currentVideoItem.collectAsStateWithLifecycle()
 
@@ -175,8 +223,7 @@ fun VideoPlayerScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .statusBarsPadding()      // top safe area
-                            .navigationBarsPadding()  // bottom safe area
-                            .padding(vertical = 16.dp) // custom top & bottom spacing
+                            .navigationBarsPadding()  // bottom safe area // custom top & bottom spacing
                     ) {
                         PlayerUi(
                             playPauseClick = {
