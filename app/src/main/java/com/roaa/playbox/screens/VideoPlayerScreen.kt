@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +40,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
+import com.roaa.playbox.actions.PlayerUiActions
 import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.ui.PlayerUi
 import kotlinx.coroutines.delay
@@ -55,7 +57,8 @@ fun VideoPlayerScreen(
     val activity = context as Activity
     var lastOrientation by remember { mutableStateOf<Int?>(null) }
     val scope = rememberCoroutineScope()
-    var isOrientationLocker by remember { mutableStateOf(false) }
+    var isOrientationLocked by remember { mutableStateOf(false) }
+    val isScreenInLandscape  = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val orientationListener = remember {
         object : OrientationEventListener(context) {
@@ -71,7 +74,7 @@ fun VideoPlayerScreen(
                 }
                 if (newOrientation != null && newOrientation != lastOrientation) {
                     scope.launch {
-                        delay(1000)
+                        delay(300)
                         lastOrientation = newOrientation
                         activity.requestedOrientation =
                             if (newOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -82,6 +85,14 @@ fun VideoPlayerScreen(
                     }
                 }
             }
+        }
+    }
+
+    LaunchedEffect(isOrientationLocked) {
+        if (isOrientationLocked) {
+            orientationListener.disable()
+        } else {
+            orientationListener.enable()
         }
     }
 
@@ -226,30 +237,42 @@ fun VideoPlayerScreen(
                             .navigationBarsPadding()  // bottom safe area // custom top & bottom spacing
                     ) {
                         PlayerUi(
-                            playPauseClick = {
-                                when {
-                                    !isPlaying && player.playbackState == Player.STATE_ENDED -> {
-                                        player.seekTo(0)
-                                        player.play()
-                                    }
-
-                                    isPlaying -> player.pause()
-                                    !isPlaying -> player.play()
-                                }
-                            },
                             modifier = Modifier,
                             isBuffering = isBuffering,
                             isPlaying = isPlaying,
                             currentPosition = currentPosition,
                             duration = totalDuration,
-                            onSeekBarPositionChange = {
-                                isSeeking = true
-                                seekPosition = it
-                                currentPosition = it
-                            },
-                            onSeekBarPositionChangeFinish = {
-                                player.seekTo(seekPosition)
-                                isSeeking = false
+                            isOrientationLocked = isOrientationLocked,
+                            isScreenInLandscape = isScreenInLandscape,
+                            actions = { action: PlayerUiActions ->
+                                when (action) {
+                                    PlayerUiActions.LockRotation -> {
+                                        isOrientationLocked = !isOrientationLocked
+                                    }
+
+                                    is PlayerUiActions.OnSeekPositionChange -> {
+                                        isSeeking = true
+                                        seekPosition = action.position
+                                        currentPosition = action.position
+                                    }
+
+                                    PlayerUiActions.OnSeekPositionChangeFinished -> {
+                                        player.seekTo(seekPosition)
+                                        isSeeking = false
+                                    }
+
+                                    PlayerUiActions.PlayPauseClicked -> {
+                                        when {
+                                            !isPlaying && player.playbackState == Player.STATE_ENDED -> {
+                                                player.seekTo(0)
+                                                player.play()
+                                            }
+
+                                            isPlaying -> player.pause()
+                                            !isPlaying -> player.play()
+                                        }
+                                    }
+                                }
                             }
                         )
                     }

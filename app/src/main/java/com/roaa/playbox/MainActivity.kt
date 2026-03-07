@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.roaa.playbox.Actions.TopAppBarActions
+import com.roaa.playbox.actions.TopAppBarActions
 import com.roaa.playbox.composition.localViewModel
 import com.roaa.playbox.navigation.Destinations
 import com.roaa.playbox.screens.FolderListScreen

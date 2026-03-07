@@ -1,5 +1,6 @@
 package com.roaa.playbox.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,30 +23,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.roaa.playbox.R
+import com.roaa.playbox.actions.PlayerUiActions
 import com.roaa.playbox.ui.theme.primaryBlue
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerUi(
-    playPauseClick: () -> Unit,
-    onSeekBarPositionChange: (Long) -> Unit,
-    onSeekBarPositionChangeFinish: () -> Unit,
     modifier: Modifier = Modifier,
+    actions: (PlayerUiActions) -> Unit,
     isPlaying: Boolean = true,
+    isOrientationLocked: Boolean = false,
+    isScreenInLandscape: Boolean = false,
     isBuffering: Boolean = false,
     currentPosition: Long = 0L,
     duration: Long = 0L
 ) {
+
+    val playIconRotationState by animateFloatAsState(
+        targetValue = if (isPlaying) 90f else 0f,
+        label = ""
+    )
+
+    val lockIconRotationState by animateFloatAsState(
+        targetValue = if (isOrientationLocked) -0f else 0f
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -89,10 +103,10 @@ fun PlayerUi(
                 Slider(
                     value = currentPosition.toFloat(),
                     onValueChange = { newPosition ->
-                        onSeekBarPositionChange(newPosition.toLong())
+                        actions(PlayerUiActions.OnSeekPositionChange(newPosition.toLong()))
                     },
                     onValueChangeFinished = {
-                        onSeekBarPositionChangeFinish()
+                        actions(PlayerUiActions.OnSeekPositionChangeFinished)
                     },
                     valueRange = 0f..duration.toFloat(),
                     modifier = Modifier
@@ -130,22 +144,41 @@ fun PlayerUi(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = {},
+                    onClick = {
+                        actions(PlayerUiActions.LockRotation)
+                    },
                     modifier = Modifier
                         .size(48.dp)
+                        .graphicsLayer {
+                            rotationZ = lockIconRotationState
+                        }
                 ) {
+                    val icon = if (isOrientationLocked) {
+                        if (isScreenInLandscape) {
+                            R.drawable.lock_lanscape
+                        } else {
+                            R.drawable.lock_portrait
+                        }
+                    } else {
+                        R.drawable.rotate_lock
+                    }
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector =
-                            ImageVector.vectorResource(R.drawable.lock_lanscape),
+                            ImageVector.vectorResource(icon),
                         contentDescription = "lock/unlock",
                         tint = Color.White
                     )
                 }
                 IconButton(
-                    onClick = playPauseClick,
+                    onClick = {
+                        actions(PlayerUiActions.PlayPauseClicked)
+                    },
                     modifier = Modifier
                         .size(48.dp)
+                        .graphicsLayer {
+                            rotationZ = playIconRotationState
+                        }
                 ) {
                     val icon = if (isPlaying) R.drawable.pause_icon else R.drawable.play_icon
                     Icon(
