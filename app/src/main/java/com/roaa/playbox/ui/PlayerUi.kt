@@ -52,7 +52,7 @@ fun PlayerUi(
 ) {
 
     val playIconRotationState by animateFloatAsState(
-        targetValue = if (isPlaying) 90f else 0f,
+        targetValue = if (isPlaying) 180f else 0f,
         label = ""
     )
 
