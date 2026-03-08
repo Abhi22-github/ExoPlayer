@@ -235,7 +235,6 @@ fun VideoPlayerScreen(
     }
 
     LaunchedEffect(isPlayerUiVisible) {
-
         val controller =
             WindowCompat.getInsetsController(
                 activity.window,
@@ -378,36 +377,5 @@ fun VideoPlayerScreen(
 
             }
         }
-    }
-}
-
-@Composable
-fun SystemBarsController(
-    show: Boolean,
-    modifier: Modifier = Modifier,
-    activity: Activity,
-    isLightBackground: Boolean
-) {
-    LaunchedEffect(show, isLightBackground) {
-
-        val window = activity.window
-        val controller =
-            WindowCompat.getInsetsController(
-                window,
-                window.decorView
-            )
-
-        if (show) {
-            controller.show(WindowInsetsCompat.Type.systemBars())
-        } else {
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat
-                    .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-
-        // 🔥 THIS FIXES LIGHT THEME ISSUE
-        controller.isAppearanceLightStatusBars = isLightBackground
-        controller.isAppearanceLightNavigationBars = isLightBackground
     }
 }
