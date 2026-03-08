@@ -190,7 +190,9 @@ fun PlayerUi(
                     )
                 }
                 IconButton(
-                    onClick = {},
+                    onClick = {
+                        actions(PlayerUiActions.ChangeContentScale)
+                    },
                     modifier = Modifier
                         .size(48.dp)
                 ) {
@@ -198,7 +200,7 @@ fun PlayerUi(
                         modifier = Modifier.size(24.dp),
                         imageVector =
                             ImageVector.vectorResource(R.drawable.aspect_ratio_icon),
-                        contentDescription = "lock/unlock",
+                        contentDescription = "change aspect ratio",
                         tint = Color.White
                     )
                 }

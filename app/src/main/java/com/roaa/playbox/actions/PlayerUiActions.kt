@@ -5,4 +5,5 @@ sealed class PlayerUiActions {
     object PlayPauseClicked : PlayerUiActions()
     data class OnSeekPositionChange(val position: Long) : PlayerUiActions()
     object OnSeekPositionChangeFinished : PlayerUiActions()
+    object ChangeContentScale : PlayerUiActions()
 }

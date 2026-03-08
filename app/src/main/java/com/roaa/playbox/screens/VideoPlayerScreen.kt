@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -58,7 +60,23 @@ fun VideoPlayerScreen(
     var lastOrientation by remember { mutableStateOf<Int?>(null) }
     val scope = rememberCoroutineScope()
     var isOrientationLocked by remember { mutableStateOf(false) }
-    val isScreenInLandscape  = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isScreenInLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    fun createContentScaleMap(): Map<Int, ContentScale> {
+        return mapOf(
+            1 to ContentScale.Fit,
+            2 to ContentScale.Crop,
+            3 to ContentScale.FillBounds,
+            4 to ContentScale.FillWidth,
+            5 to ContentScale.FillHeight,
+            6 to ContentScale.Inside
+        )
+    }
+
+    val contentScaleMap = createContentScaleMap()
+    var currentContentScale by remember { mutableIntStateOf(1) }
+
 
     val orientationListener = remember {
         object : OrientationEventListener(context) {
@@ -217,7 +235,8 @@ fun VideoPlayerScreen(
             ContentFrame(
                 player = player,
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                contentScale = contentScaleMap.getOrDefault(currentContentScale, ContentScale.Fit)
             )
 
             // Showing the UI on the Player Screen
@@ -271,6 +290,11 @@ fun VideoPlayerScreen(
                                             isPlaying -> player.pause()
                                             !isPlaying -> player.play()
                                         }
+                                    }
+
+                                    PlayerUiActions.ChangeContentScale -> {
+                                        currentContentScale =
+                                            ++currentContentScale % contentScaleMap.size
                                     }
                                 }
                             }
