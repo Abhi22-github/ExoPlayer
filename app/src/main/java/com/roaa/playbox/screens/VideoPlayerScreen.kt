@@ -5,8 +5,13 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.OrientationEventListener
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +20,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +42,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -77,6 +89,15 @@ fun VideoPlayerScreen(
     val contentScaleMap = createContentScaleMap()
     var currentContentScale by remember { mutableIntStateOf(1) }
 
+    val animationSpec = tween<IntOffset>(
+        durationMillis = 400,
+        easing = FastOutSlowInEasing
+    )
+
+    val fadeSpec = tween<Float>(
+        durationMillis = 800,
+        easing = LinearOutSlowInEasing
+    )
 
     val orientationListener = remember {
         object : OrientationEventListener(context) {
@@ -213,6 +234,28 @@ fun VideoPlayerScreen(
         }
     }
 
+    LaunchedEffect(isPlayerUiVisible) {
+
+        val controller =
+            WindowCompat.getInsetsController(
+                activity.window,
+                activity.window.decorView
+            )
+
+        if (isPlayerUiVisible) {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        } else {
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat
+                    .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
+        // Fix icon color for light/dark themes
+        controller.isAppearanceLightStatusBars = false
+        controller.isAppearanceLightNavigationBars = false
+    }
+
     Column(
         modifier = modifier
             .background(Color.Black)
@@ -243,17 +286,48 @@ fun VideoPlayerScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
             ) {
                 AnimatedVisibility(
                     visible = isPlayerUiVisible,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    enter = fadeIn(fadeSpec) + slideInVertically(
+                        animationSpec = animationSpec,
+                        initialOffsetY = { fullHeight -> -fullHeight } // Start from below the screen
+                    ),
+                    exit = fadeOut(fadeSpec) + slideOutVertically(
+                        animationSpec = animationSpec,
+                        targetOffsetY = { fullHeight -> -fullHeight } // Slide down out of view
+                    )
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()      // top safe area
-                            .navigationBarsPadding()  // bottom safe area // custom top & bottom spacing
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(top = 36.dp),
+                            text = videoItem.name,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = isPlayerUiVisible,
+                    enter = fadeIn(fadeSpec) + slideInVertically(
+                        animationSpec = animationSpec,
+                        initialOffsetY = { fullHeight -> fullHeight } // Start from below the screen
+                    ),
+                    exit = fadeOut(fadeSpec) + slideOutVertically(
+                        animationSpec = animationSpec,
+                        targetOffsetY = { fullHeight -> fullHeight } // Slide down out of view
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
                     ) {
                         PlayerUi(
                             modifier = Modifier,
@@ -301,7 +375,39 @@ fun VideoPlayerScreen(
                         )
                     }
                 }
+
             }
         }
+    }
+}
+
+@Composable
+fun SystemBarsController(
+    show: Boolean,
+    modifier: Modifier = Modifier,
+    activity: Activity,
+    isLightBackground: Boolean
+) {
+    LaunchedEffect(show, isLightBackground) {
+
+        val window = activity.window
+        val controller =
+            WindowCompat.getInsetsController(
+                window,
+                window.decorView
+            )
+
+        if (show) {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        } else {
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat
+                    .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
+        // 🔥 THIS FIXES LIGHT THEME ISSUE
+        controller.isAppearanceLightStatusBars = isLightBackground
+        controller.isAppearanceLightNavigationBars = isLightBackground
     }
 }
