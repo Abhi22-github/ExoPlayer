@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,17 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.roaa.playbox.actions.TopAppBarActions
 import com.roaa.playbox.R
+import com.roaa.playbox.actions.TopAppBarActions
 import com.roaa.playbox.composition.localViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayBoxTopAppBar(
+    modifier: Modifier = Modifier,
     actions: (TopAppBarActions) -> Unit,
     shouldShowBackButton: Boolean = false,
     scrollBehavior: TopAppBarScrollBehavior,
-    modifier: Modifier = Modifier
 ) {
 
     val viewModel = localViewModel.current
@@ -39,7 +40,8 @@ fun PlayBoxTopAppBar(
 
     TopAppBar(
         scrollBehavior = scrollBehavior,
-
+        modifier = modifier,
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
         title = {
             if (!shouldShowBackButton) {
                 Row(verticalAlignment = Alignment.CenterVertically) {

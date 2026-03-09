@@ -40,14 +40,13 @@ import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.roaa.playbox.composition.localViewModel
-import com.roaa.playbox.viewmodels.MainViewModel
 import com.roaa.playbox.models.VideoFolder
 import com.roaa.playbox.models.VideoItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FolderListScreen(
+fun  FolderListScreen(
     videoFolderClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

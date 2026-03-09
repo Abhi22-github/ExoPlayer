@@ -2,6 +2,7 @@ package com.roaa.playbox.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.roaa.playbox.R
 import com.roaa.playbox.actions.PlayerUiActions
 import com.roaa.playbox.ui.theme.primaryBlue
+import com.roaa.playbox.utils.toTimeFormat
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +63,8 @@ fun PlayerUi(
         targetValue = if (isOrientationLocked) -0f else 0f
     )
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -82,16 +87,17 @@ fun PlayerUi(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = formatDuration(currentPosition),
+                    text = currentPosition.toTimeFormat(),
                     color = Color.White,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = formatDuration(duration),
+                    text = duration.toTimeFormat(),
                     color = Color.White,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -140,13 +146,15 @@ fun PlayerUi(
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
                     onClick = {
                         actions(PlayerUiActions.LockRotation)
                     },
+                    interactionSource = interactionSource,
                     modifier = Modifier
                         .size(48.dp)
                         .graphicsLayer {

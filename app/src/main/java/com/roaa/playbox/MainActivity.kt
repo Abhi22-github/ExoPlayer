@@ -53,12 +53,9 @@ class MainActivity : ComponentActivity() {
         val viewModel: MainViewModel by viewModels()
         setContent {
             ExoPlayerTheme {
-
-
                 // initializing the repo with context
                 val context = LocalContext.current
                 viewModel.initializeVideoRepository(VideoRepository(context))
-
 
                 val backStack = rememberNavBackStack(Destinations.FolderListScreen)
                 val currentDestination by remember { derivedStateOf { backStack.lastOrNull() } }
@@ -75,6 +72,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val modifier = Modifier.background(MaterialTheme.colorScheme.background)
+
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
                 CompositionLocalProvider(
@@ -83,10 +82,8 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
-
                             AnimatedVisibility(
                                 visible = !shouldHideAppBar,
                                 enter = fadeIn() + slideInVertically { -it },
@@ -94,7 +91,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Column() {
                                     PlayBoxTopAppBar(
-                                        modifier = Modifier
+                                        modifier = modifier
                                             .fillMaxWidth()
                                             .statusBarsPadding(),
                                         shouldShowBackButton = shouldShowBackButton,
@@ -150,7 +147,7 @@ class MainActivity : ComponentActivity() {
                             entryProvider = entryProvider {
                                 entry<Destinations.FolderListScreen> {
                                     FolderListScreen(
-                                        modifier = Modifier.padding(innerPadding),
+                                        modifier = modifier.padding(innerPadding),
                                         videoFolderClick = {
                                             backStack.add(Destinations.VideoListScreen)
                                         }
@@ -159,7 +156,7 @@ class MainActivity : ComponentActivity() {
 
                                 entry<Destinations.VideoListScreen> {
                                     VideoListScreen(
-                                        modifier = Modifier.padding(innerPadding),
+                                        modifier = modifier.padding(innerPadding),
                                         videoItemClick = { videoItem ->
                                             viewModel.setVideoItem(videoItem)
                                             backStack.add(Destinations.VideoPlayerScreen)
@@ -169,7 +166,7 @@ class MainActivity : ComponentActivity() {
 
                                 entry<Destinations.VideoPlayerScreen> {
                                     VideoPlayerScreen(
-                                        modifier = Modifier
+                                        modifier = modifier
                                     )
                                 }
                             }
