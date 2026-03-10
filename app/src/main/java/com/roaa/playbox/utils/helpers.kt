@@ -15,3 +15,9 @@ fun Long.toTimeFormat(): String {
         String.format("%02d:%02d", totalMinutes, totalSeconds)
     }
 }
+
+
+enum class BottomAppBarState{
+    VideoScreen,
+    MoreScreen,
+}
