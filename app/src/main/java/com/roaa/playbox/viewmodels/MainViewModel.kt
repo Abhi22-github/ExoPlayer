@@ -1,5 +1,6 @@
 package com.roaa.playbox.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roaa.playbox.models.VideoFolder
@@ -26,6 +27,10 @@ class MainViewModel : ViewModel() {
         MutableStateFlow(VideoItem())
     val currentVideoItem: StateFlow<VideoItem> = _currentVideoItem
 
+    private val _currentExternalVideoItem: MutableStateFlow<VideoItem> =
+        MutableStateFlow(VideoItem())
+    val currentExternalVideoItem: StateFlow<VideoItem> = _currentExternalVideoItem
+
 
     fun initializeVideoRepository(videoRepository: VideoRepository) {
         this.videoRepository = videoRepository
@@ -41,6 +46,8 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getVideoItemFromUri(uri: Uri) = videoRepository.getVideoItemFromUri(uri)
+
     fun setVideoFolder(videoFolder: VideoFolder) {
         viewModelScope.launch {
             _currentVideoFolder.emit(videoFolder)
@@ -50,6 +57,12 @@ class MainViewModel : ViewModel() {
     fun setVideoItem(videoItem: VideoItem) {
         viewModelScope.launch {
             _currentVideoItem.emit(videoItem)
+        }
+    }
+
+    fun setExternalVideoItem(videoItem: VideoItem) {
+        viewModelScope.launch {
+            _currentExternalVideoItem.emit(videoItem)
         }
     }
 }

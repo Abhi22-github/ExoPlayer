@@ -1,5 +1,7 @@
 package com.roaa.playbox
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -69,16 +73,27 @@ import com.roaa.playbox.utils.VideoRepository
 import com.roaa.playbox.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private var externalVideoUri: Uri? = null
+
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        externalVideoUri = intent?.data
         enableEdgeToEdge()
         val viewModel: MainViewModel by viewModels()
+        viewModel.initializeVideoRepository(VideoRepository(this))
+
+        externalVideoUri?.let {
+            viewModel.getVideoItemFromUri(it)?.let { videoItem ->
+                viewModel.setExternalVideoItem(videoItem = videoItem)
+            }
+        }
+
         setContent {
             ExoPlayerTheme {
                 // initializing the repo with context
                 val context = LocalContext.current
-                viewModel.initializeVideoRepository(VideoRepository(context))
 
                 val backStack = rememberNavBackStack(Destinations.FolderListScreen)
                 val currentDestination by remember { derivedStateOf { backStack.lastOrNull() } }
@@ -92,9 +107,18 @@ class MainActivity : ComponentActivity() {
                 // for app toolbar selection
                 var selectedAppBarScreen by remember { mutableStateOf(BottomAppBarState.VideoScreen) }
 
+                val videoItem by viewModel.currentExternalVideoItem.collectAsStateWithLifecycle()
+
                 fun navigateBack() {
                     if (backStack.size > 1) {
                         backStack.removeLastOrNull()
+                    }
+                }
+
+                LaunchedEffect(videoItem) {
+                    externalVideoUri?.let {
+                        viewModel.setVideoItem(videoItem)
+                        backStack.add(Destinations.VideoPlayerScreen)
                     }
                 }
 
@@ -200,38 +224,61 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
 
-                            HorizontalFloatingToolbar(
-                                expanded = false,
+                            AnimatedVisibility(
+                                visible = !shouldHideAppBar,
+                                enter = fadeIn() + slideInVertically { it },
+                                exit = fadeOut() + slideOutVertically { it },
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .offset(y = -ScreenOffset),
-                                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                                    toolbarContainerColor = MaterialTheme.colorScheme.surface
-                                ),
-                                contentPadding = PaddingValues(4.dp)
                             ) {
-                                ToolbarButtons(
-                                    iconVector = R.drawable.video_icon,
-                                    iconText = "Video",
-                                    isSelected = selectedAppBarScreen == BottomAppBarState.VideoScreen,
-                                    buttonType = BottomAppBarState.VideoScreen,
-                                    appBarButtonClicked = {
-                                        selectedAppBarScreen = it
-                                    }
-                                )
-                                ToolbarButtons(
-                                    iconVector = R.drawable.more_icon,
-                                    iconText = "More",
-                                    isSelected = selectedAppBarScreen == BottomAppBarState.MoreScreen,
-                                    buttonType = BottomAppBarState.MoreScreen,
-                                    appBarButtonClicked = {
-                                        selectedAppBarScreen = it
-                                    }
-                                )
+                                HorizontalFloatingToolbar(
+                                    expanded = false,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .offset(y = -ScreenOffset),
+                                    colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                                        toolbarContainerColor = MaterialTheme.colorScheme.surface
+                                    ),
+                                    contentPadding = PaddingValues(4.dp)
+                                ) {
+                                    ToolbarButtons(
+                                        iconVector = R.drawable.video_icon,
+                                        iconText = "Video",
+                                        isSelected = selectedAppBarScreen == BottomAppBarState.VideoScreen,
+                                        buttonType = BottomAppBarState.VideoScreen,
+                                        appBarButtonClicked = {
+                                            selectedAppBarScreen = it
+                                        }
+                                    )
+                                    ToolbarButtons(
+                                        iconVector = R.drawable.more_icon,
+                                        iconText = "More",
+                                        isSelected = selectedAppBarScreen == BottomAppBarState.MoreScreen,
+                                        buttonType = BottomAppBarState.MoreScreen,
+                                        appBarButtonClicked = {
+                                            selectedAppBarScreen = it
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        externalVideoUri = intent.data
+
+        externalVideoUri?.let {
+            val viewModel: MainViewModel by viewModels()
+            viewModel.initializeVideoRepository(VideoRepository(this))
+            viewModel.getVideoItemFromUri(it)?.let { videoItem ->
+                viewModel.setExternalVideoItem(videoItem = videoItem)
             }
         }
     }

@@ -2,6 +2,7 @@ package com.roaa.playbox.utils
 
 import android.content.ContentUris
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.roaa.playbox.models.VideoFolder
@@ -112,6 +113,71 @@ class VideoRepository(private val context: Context) {
             .sortedBy { folder ->
                 folder.videos.maxOf { it.dateAdded }
             }
+    }
+
+    fun getVideoItemFromUri(uri: Uri): VideoItem? {
+
+        val projection = arrayOf(
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Video.Media.DATE_ADDED,
+            MediaStore.Video.Media.MIME_TYPE,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.BUCKET_ID,
+            MediaStore.Video.Media.BUCKET_DISPLAY_NAME
+        )
+
+        val resolver = context.contentResolver
+
+        resolver.query(uri, projection, null, null, null)?.use { cursor ->
+
+            if (cursor.moveToFirst()) {
+
+                val id =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+
+                val name =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
+
+                val size =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
+
+                val duration =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
+
+                val dateAdded =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
+
+                val mimeType =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE))
+
+                val path =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
+
+                val bucketId =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID))
+
+                val bucketName =
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME))
+
+                return VideoItem(
+                    id = id,
+                    name = name,
+                    uri = uri,
+                    size = size,
+                    duration = duration,
+                    dateAdded = dateAdded,
+                    mimeType = mimeType,
+                    path = path,
+                    bucketId = bucketId,
+                    bucketName = bucketName
+                )
+            }
+        }
+
+        return null
     }
 
 }
