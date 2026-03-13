@@ -225,7 +225,7 @@ class MainActivity : ComponentActivity() {
                             )
 
                             AnimatedVisibility(
-                                visible = !shouldHideAppBar,
+                                visible = false,
                                 enter = fadeIn() + slideInVertically { it },
                                 exit = fadeOut() + slideOutVertically { it },
                                 modifier = Modifier
