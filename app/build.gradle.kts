@@ -6,8 +6,8 @@ plugins {
 
 // Define version components
 val versionMajor = 1
-val versionMinor = 3
-val versionPatch = 0
+val versionMinor = 4
+val versionPatch = 1
 val isBeta = true
 
 android {
