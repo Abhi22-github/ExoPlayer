@@ -23,10 +23,7 @@ Browse your videos organized by folder, play them in fullscreen, and control eve
 <!-- Add your Play Store screenshots to the /ss folder at the repo root. -->
 
 <p align="center">
-  <img src="screenshots/screenshot_1.jpeg" width="23%" />
- <img src="screenshots/screenshot_2.jpeg" width="23%" />
-  <img src="screenshots/screenshot_3.jpeg" width="23%" />
-
+  <img src="screenshots/overview_scrrenshot.png"  />
 </p>
 
 ---
