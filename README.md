@@ -58,7 +58,7 @@ Browse your videos organized by folder, play them in fullscreen, and control eve
 ## Building from Source
 
 ```bash
-git clone https://github.com/Abhi22-github/PlayBox.git
+git clone https://github.com/Abhi22-github/ExoPlayer.git
 cd PlayBox
 ./gradlew assembleDebug
 ```
