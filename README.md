@@ -58,18 +58,10 @@ Browse your videos organized by folder, play them in fullscreen, and control eve
 ## Building from Source
 
 ```bash
-# Clone the repo
 git clone https://github.com/Abhi22-github/PlayBox.git
 cd PlayBox
-
-# Debug build
 ./gradlew assembleDebug
-
-# Release AAB (Play Store)
-./gradlew bundleRelease
 ```
-
-> **Note:** The release build requires a signing keystore. Configure it in `app/build.gradle.kts` or via environment variables before running `assembleRelease` / `bundleRelease`.
 
 ---
 
