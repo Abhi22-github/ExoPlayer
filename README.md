@@ -59,7 +59,7 @@ Browse your videos organized by folder, play them in fullscreen, and control eve
 
 ```bash
 # Clone the repo
-git clone https://github.com/<your-username>/PlayBox.git
+git clone https://github.com/Abhi22-github/PlayBox.git
 cd PlayBox
 
 # Debug build
@@ -93,12 +93,6 @@ app/src/main/java/com/roaa/playbox/
 
 ## License
 
-```
-Copyright 2024 Abhi
+Copyright 2026 Abhi
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-```
+Licensed under the [Apache License, Version 2.0](LICENSE).
