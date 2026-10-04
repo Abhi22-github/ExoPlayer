@@ -7,10 +7,10 @@ plugins {
 }
 
 // Define version components
-val versionMajor = 1
-val versionMinor = 4
-val versionPatch = 1
-val isBeta = true
+val versionMajor = 2
+val versionMinor = 0
+val versionPatch = 0
+val isBeta = false
 
 android {
     namespace = "com.roaa.playbox"
@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.roaa.playbox"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName =
             "${versionMajor}.${versionMinor}.${versionPatch}" + if (isBeta) "-beta" else ""
