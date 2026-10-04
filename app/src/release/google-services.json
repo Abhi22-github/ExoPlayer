@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "14541676863",
+    "project_id": "playbox-261ea",
+    "storage_bucket": "playbox-261ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14541676863:android:42506a4561cca77e81b38a",
+        "android_client_info": {
+          "package_name": "com.roaa.playbox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIqbDDmkf9gmxfli0d4r_CRBnf9Qv8bC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

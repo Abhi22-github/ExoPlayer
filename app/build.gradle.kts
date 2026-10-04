@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 // Define version components
@@ -57,6 +59,13 @@ android {
     }
 }
 
+// Firebase is configured for release only (app/src/release/google-services.json),
+// so debug builds skip google-services processing and Firebase stays inactive.
+googleServices {
+    missingGoogleServicesStrategy =
+        com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy.IGNORE
+}
+
 tasks.withType<com.android.build.gradle.tasks.PackageAndroidArtifact> {
     // no-op
 }
@@ -94,4 +103,9 @@ dependencies {
     implementation(libs.coil.video)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.kotlinx.serialization.json)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }
